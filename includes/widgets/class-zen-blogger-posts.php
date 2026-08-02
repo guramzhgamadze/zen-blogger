@@ -1223,9 +1223,21 @@ class Zen_Blogger_Posts extends Widget_Base {
 			$base = add_query_arg( $this->tax_arg( $uid, $taxonomy ), implode( ',', array_map( 'intval', $ids ) ), $base );
 		}
 
-		$page_url = function ( $n ) use ( $base, $uid ) {
-			return add_query_arg( self::page_arg( $uid ), (int) $n, $base );
-		};
+		/*
+		 * With Current Query the links have to drive the MAIN query, so they are
+		 * the archive's own /page/N/ URLs. A private query arg would change what
+		 * this widget asked for without changing what the page is, which is how
+		 * you end up with a paginator that renumbers but never moves.
+		 */
+		if ( 'current' === ( isset( $settings['zenblog_source'] ) ? $settings['zenblog_source'] : '' ) ) {
+			$page_url = function ( $n ) {
+				return get_pagenum_link( max( 1, (int) $n ) );
+			};
+		} else {
+			$page_url = function ( $n ) use ( $base, $uid ) {
+				return add_query_arg( self::page_arg( $uid ), (int) $n, $base );
+			};
+		}
 
 		echo '<nav class="zenblog__nav" aria-label="' . esc_attr__( 'Posts pagination', 'zen-blogger' ) . '">';
 
@@ -1402,11 +1414,18 @@ class Zen_Blogger_Posts extends Widget_Base {
 
 		add_filter( 'zenblog_query_args', array( $this, 'apply_paging' ), 10, 1 );
 
+		// The result count needs a real total, and a total is exactly what
+		// no_found_rows throws away — without this the label reads "0 posts"
+		// whenever pagination happens to be off.
+		$counting = 'yes' === ( isset( $settings['zenblog_filter'] ) ? $settings['zenblog_filter'] : '' )
+			&& 'yes' === ( isset( $settings['zenblog_show_count'] ) ? $settings['zenblog_show_count'] : '' );
+
 		$this->paging = array(
 			'paged'    => $paged,
 			'state'    => $state,
 			'relation' => ( isset( $settings['zenblog_filter_relation'] ) && 'AND' === $settings['zenblog_filter_relation'] ) ? 'AND' : 'IN',
 			'paginate' => $paginate,
+			'counting' => $counting,
 		);
 
 		$query = Zen_Blogger_Query::run( $settings, $this->get_id() );
@@ -1446,9 +1465,12 @@ class Zen_Blogger_Posts extends Widget_Base {
 		}
 
 		if ( ! empty( $p['paginate'] ) ) {
-			$args['paged']         = (int) $p['paged'];
-			$args['no_found_rows'] = false;
+			$args['paged'] = (int) $p['paged'];
 			unset( $args['offset'] ); // offset and paged are mutually exclusive in WP_Query.
+		}
+
+		if ( ! empty( $p['paginate'] ) || ! empty( $p['counting'] ) ) {
+			$args['no_found_rows'] = false;
 		}
 
 		$state = isset( $p['state'] ) ? $p['state'] : array();
@@ -1662,7 +1684,23 @@ class Zen_Blogger_Posts extends Widget_Base {
 	 * @return int
 	 */
 	private function current_page( array $settings ) {
-		unset( $settings );
+		/*
+		 * Current Query follows the page the visitor is actually on. The widget
+		 * is showing the main query, so the archive's own paginator is what moves
+		 * it — reading a private query arg instead left the widget stuck on page
+		 * one while the rest of /page/2/ had moved on.
+		 */
+		if ( 'current' === ( isset( $settings['zenblog_source'] ) ? $settings['zenblog_source'] : '' ) ) {
+			// 'page' rather than 'paged' when the posts page is a static front page.
+			$paged = (int) get_query_var( 'paged' );
+
+			if ( ! $paged ) {
+				$paged = (int) get_query_var( 'page' );
+			}
+
+			return max( 1, $paged );
+		}
+
 		$key = self::page_arg( 'zenblog-' . $this->get_id() );
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only pagination state, no state change.

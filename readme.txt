@@ -4,7 +4,7 @@ Tags: elementor, carousel, blog, slider, posts
 Requires at least: 6.5
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.5.1
+Stable tag: 1.5.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -115,6 +115,10 @@ Yes. The layout uses logical properties throughout and the carousel direction fo
 6. Style controls for the card, image and read-more button.
 
 == Changelog ==
+
+= 1.5.2 =
+* Fixed: with the Current Query source, the widget stayed on page one while the rest of the archive moved. It read its own page number instead of the archive's, so /page/2/ showed page one's posts. It now follows the page the visitor is on, and its paging links drive the archive rather than a private query argument.
+* Fixed: the result count read "0 posts" whenever pagination was switched off, because the query was told not to count rows.
 
 = 1.5.1 =
 * New: drop shadow controls for the filter bar — one for the bar itself, one for the controls inside it.
