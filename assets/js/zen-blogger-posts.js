@@ -9,12 +9,6 @@
 ( function () {
 	'use strict';
 
-	// Infinite scroll auto-loads at most this many times in a row before the
-	// visitor has to press the button again. A feed that keeps growing as you
-	// scroll makes everything below it unreachable — the classic keyboard trap —
-	// so the run is capped rather than unbounded.
-	var AUTO_LOAD_CAP = 2;
-
 	var i18n = window.zenBloggerI18n || {};
 
 	function t( key, fallback ) {
@@ -103,6 +97,8 @@
 		}
 
 		var appendMode = cfg.nav === 'load_more' || cfg.nav === 'infinite';
+		var autoMax = Math.max( 1, parseInt( cfg.autoMax, 10 ) || 5 );
+		var observer = null;
 		var idPart = root.id.replace( /[^a-z0-9]/gi, '' );
 
 		function announce( message ) {
@@ -262,6 +258,22 @@
 
 					updateNav( data.nav );
 					syncResetVisibility();
+
+					/*
+					 * On a tall viewport the sentinel can still be on screen after a
+					 * page is appended. IntersectionObserver only fires on a change of
+					 * intersection, so without this nudge the feed stalls until the
+					 * visitor scrolls away and back.
+					 */
+					if ( observer && append && state.paged < state.maxPages && state.autoRuns < autoMax ) {
+						var sentinelNow = root.querySelector( '.zenblog__sentinel' );
+						if ( sentinelNow ) {
+							observer.unobserve( sentinelNow );
+							window.requestAnimationFrame( function () {
+								observer.observe( sentinelNow );
+							} );
+						}
+					}
 					syncAddressBar( data.paged, query );
 					announce( data.message );
 
@@ -403,25 +415,38 @@
 		} );
 
 		if ( 'infinite' === cfg.nav && window.IntersectionObserver ) {
-			var sentinel = root.querySelector( '.zenblog__nav' );
+			/*
+			 * The sentinel is a dedicated element after the paginator, not the
+			 * paginator itself: the paginator is replaced on every page, and an
+			 * observer left watching the detached node never fires again.
+			 */
+			var sentinel = root.querySelector( '.zenblog__sentinel' );
 
 			if ( sentinel ) {
-				var io = new IntersectionObserver(
+				observer = new IntersectionObserver(
 					function ( entries ) {
 						entries.forEach( function ( entry ) {
 							if ( ! entry.isIntersecting || state.busy ) {
 								return;
 							}
-							if ( state.paged >= state.maxPages || state.autoRuns >= AUTO_LOAD_CAP ) {
+
+							if ( state.paged >= state.maxPages ) {
+								// Nothing left; stop watching rather than spinning.
+								observer.disconnect();
 								return;
 							}
+
+							if ( state.autoRuns >= autoMax ) {
+								return;
+							}
+
 							state.autoRuns++;
 							load( state.paged + 1, filterQuery(), true, false );
 						} );
 					},
-					{ rootMargin: '200px' }
+					{ rootMargin: '300px' }
 				);
-				io.observe( sentinel );
+				observer.observe( sentinel );
 			}
 		}
 	}

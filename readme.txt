@@ -4,7 +4,7 @@ Tags: elementor, carousel, blog, slider, posts
 Requires at least: 6.5
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.4.0
+Stable tag: 1.4.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -116,6 +116,12 @@ Yes. The layout uses logical properties throughout and the carousel direction fo
 
 == Changelog ==
 
+= 1.4.1 =
+* Fixed: infinite scroll stopped after the first automatic load. It watched the paginator, which is replaced on every page, so the observer was left watching a node that was no longer in the document. It now watches a dedicated element that is never re-rendered.
+* Fixed: paging links inside an AJAX response pointed at the REST endpoint instead of the page, because they were built from the current request. Opening one in a new tab produced raw JSON.
+* Fixed: infinite scroll could stall on a tall screen, where the trigger stayed on-screen after a page was appended and so never crossed the threshold again.
+* New: the infinite-scroll auto-load limit is a control rather than a fixed value.
+
 = 1.4.0 =
 * Fixed: with many pages, the numbered paginator was a trap — the window stayed on its first range, so pages beyond it could never be reached. It now shows first and last with an ellipsis, and the server re-renders the window on every AJAX page change.
 * Fixed: the search box shared the top row with the filters on the front end even though it looked right in the editor. It now owns its own full-width row at any container width.
@@ -172,6 +178,9 @@ Yes. The layout uses logical properties throughout and the carousel direction fo
 * schema.org ItemList output in JSON-LD, with a Zen GEO integration that shares node identity instead of duplicating it.
 
 == Upgrade Notice ==
+
+= 1.4.1 =
+Fixes infinite scroll, which stopped after one automatic load.
 
 = 1.4.0 =
 Fixes a paginator that could strand visitors on long archives, plus a set of filter-bar and card layout corrections.

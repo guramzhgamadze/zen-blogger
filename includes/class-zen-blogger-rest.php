@@ -171,7 +171,9 @@ final class Zen_Blogger_Rest {
 		 */
 		$state = $widget->parse_filter_query( $query );
 
-		return rest_ensure_response( $widget->render_ajax_page( $paged, $state ) );
+		// The page's own permalink, so paging links in the returned markup point at
+		// the page rather than at this endpoint.
+		return rest_ensure_response( $widget->render_ajax_page( $paged, $state, (string) get_permalink( $post_id ) ) );
 	}
 
 	/**

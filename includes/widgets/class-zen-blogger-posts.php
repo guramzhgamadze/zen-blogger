@@ -337,6 +337,19 @@ class Zen_Blogger_Posts extends Widget_Base {
 		);
 
 		$this->add_control(
+			'zenblog_infinite_max',
+			array(
+				'label'       => esc_html__( 'Auto-Load Limit', 'zen-blogger' ),
+				'description' => esc_html__( 'How many pages load automatically before the button must be pressed again. A feed that never stops growing puts the footer permanently out of reach.', 'zen-blogger' ),
+				'type'        => Controls_Manager::NUMBER,
+				'min'         => 1,
+				'max'         => 20,
+				'default'     => 5,
+				'condition'   => array( 'zenblog_nav' => 'infinite' ),
+			)
+		);
+
+		$this->add_control(
 			'zenblog_infinite_note',
 			array(
 				'type'            => Controls_Manager::RAW_HTML,
@@ -847,6 +860,7 @@ class Zen_Blogger_Posts extends Widget_Base {
 						'total'     => $total,
 						'state'     => $state,
 						'perPage'   => $this->per_page( $settings ),
+						'autoMax'   => isset( $settings['zenblog_infinite_max'] ) ? max( 1, (int) $settings['zenblog_infinite_max'] ) : 5,
 					)
 				),
 			)
@@ -885,6 +899,19 @@ class Zen_Blogger_Posts extends Widget_Base {
 			</div>
 
 			<?php $this->render_nav( $settings, $paged, $maxpage, $uid, $state ); ?>
+
+			<?php if ( 'infinite' === $nav ) : ?>
+				<?php
+				/*
+				 * Infinite scroll watches this, not the paginator. The paginator is
+				 * replaced wholesale on every AJAX page — observing it meant the
+				 * IntersectionObserver was left watching a detached node after the
+				 * first load, and auto-loading silently stopped. This element is
+				 * never re-rendered, so the observer stays attached.
+				 */
+				?>
+				<div class="zenblog__sentinel" aria-hidden="true"></div>
+			<?php endif; ?>
 		</div>
 		<?php
 		wp_reset_postdata();
@@ -982,8 +1009,14 @@ class Zen_Blogger_Posts extends Widget_Base {
 			return;
 		}
 
-		// Paging links carry the active filters, or page 2 silently drops them.
-		$base = remove_query_arg( self::page_arg( $uid ) );
+		/*
+		 * Built from the page's own URL, not the current request. When this runs
+		 * inside the REST callback the current request is /wp-json/..., and the
+		 * no-JavaScript fallback links would point visitors at raw JSON.
+		 */
+		$base = $this->nav_base_url
+			? remove_query_arg( self::page_arg( $uid ), $this->nav_base_url )
+			: remove_query_arg( self::page_arg( $uid ) );
 
 		if ( '' !== $state['search'] ) {
 			$base = add_query_arg( $this->search_arg( $uid ), rawurlencode( $state['search'] ), $base );
@@ -1102,13 +1135,15 @@ class Zen_Blogger_Posts extends Widget_Base {
 	/**
 	 * Render one page of results for the REST endpoint.
 	 *
-	 * @param int   $paged Page number.
-	 * @param array $state Validated filter state.
+	 * @param int    $paged    Page number.
+	 * @param array  $state    Validated filter state.
+	 * @param string $page_url URL the widget's page lives at.
 	 * @return array
 	 */
-	public function render_ajax_page( $paged, array $state ) {
-		$settings = $this->get_settings_for_display();
-		$query    = $this->run_query( $settings, $paged, $state );
+	public function render_ajax_page( $paged, array $state, $page_url = '' ) {
+		$settings           = $this->get_settings_for_display();
+		$this->nav_base_url = $page_url ? $page_url : '';
+		$query              = $this->run_query( $settings, $paged, $state );
 
 		ob_start();
 
@@ -1190,6 +1225,13 @@ class Zen_Blogger_Posts extends Widget_Base {
 	 * @var array
 	 */
 	private $paging = array();
+
+	/**
+	 * URL paging links are built against, when it is not the current request.
+	 *
+	 * @var string
+	 */
+	private $nav_base_url = '';
 
 	/**
 	 * Inject paging and the active term filter into the query args.
