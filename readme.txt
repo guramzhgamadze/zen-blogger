@@ -1,0 +1,175 @@
+=== Zen Blogger ===
+Contributors: guramzgamadze
+Tags: elementor, carousel, blog, slider, posts
+Requires at least: 6.5
+Tested up to: 7.0
+Requires PHP: 7.4
+Stable tag: 1.2.2
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+
+Accessible, fast blog widgets for Elementor. A carousel and a post grid, six skins, a deep query builder, and no second slider library.
+
+== Description ==
+
+Zen Blogger adds two widgets to Elementor: **Blog Carousel** and **Posts**. Both draw the same card and share the same query builder, so a layout you design once works either way. They are built around three things most post widgets get wrong.
+
+**It is accessible by default.** Turning autoplay on adds a play/pause button — you can move it or make it appear on hover, but you cannot delete it, because moving content with no way to stop it fails WCAG 2.2.2. Arrows and the play/pause control are real buttons at a 44px target. Slides carry proper carousel semantics, keyboard control is on by default, and visitors whose system asks for reduced motion get no autoplay and instant transitions.
+
+**It does not ship a second slider library.** The carousel runs on the Swiper build Elementor already loads. Nothing is enqueued on pages that do not use the widget. Images in the first visible row load eagerly with high fetch priority and everything after them loads lazily, and the image box reserves its aspect ratio up front so the carousel does not shift your layout while it loads. If the script never runs, the markup stays a scroll-snapping row instead of collapsing.
+
+**The query builder is not an afterthought.** Filter by post type, taxonomy (include *and* exclude, combined with AND or OR), author, date range, and custom field ordering. Show posts related to the post being viewed, hand-pick them, or reuse the archive's own query. Exclude the current post, skip posts already shown by another carousel on the page, or require a featured image.
+
+= The Posts widget =
+
+Grid, masonry, list, or a feature layout where the first post spans wider. Pagination is page numbers, previous/next, a Load More button, or infinite scroll — and every one of them starts life as a real link, so the widget works with JavaScript disabled and every page stays crawlable.
+
+What sets it apart is what happens *after* an AJAX update, which is where most post grids quietly fail:
+
+* The new result count is announced politely — "Showing 6 of 8 posts" — instead of the page silently changing.
+* The grid is marked `aria-busy` while it loads.
+* Focus moves to the first newly loaded post, so keyboard users carry on from the new content rather than being dropped at the top of the page. On an auto-triggered infinite load focus is deliberately *not* taken, because nobody asked for it.
+* Infinite scroll auto-loads at most twice in a row before the button must be pressed again. An endless feed makes everything below it unreachable; capping the run keeps the footer in reach.
+* The address bar keeps up with filters, so Back works and a filtered view can be shared.
+
+The optional filter bar is built from real term-archive links and reflects the current selection with `aria-current`.
+
+= Skins =
+
+* Classic — image above the text
+* Overlay — text over the image
+* Overlap — the text block lifted over the image
+* Side by side — image left or right
+* Minimal — no image
+* Editorial — oversized running numbers
+
+= Motion =
+
+Slide, fade, coverflow, cards and creative effects; free scroll and a continuous ticker mode; multiple rows; centred slides; dots, dynamic dots, a fraction counter, a progress bar or a draggable scrollbar.
+
+= Styling =
+
+Every colour, font, size, spacing, border, radius and shadow is an Elementor control — including hover and focus states. Nothing is hard-coded, and no colour is applied as a default you cannot switch off.
+
+= SEO and AI (GEO) =
+
+Every slide is rendered server-side as a real `<a href>` inside an `<article>`, with a selectable heading tag and a machine-readable `<time datetime>`. Search engines and AI crawlers read the entire list from the page source — nothing is fetched by JavaScript, and nothing is hidden behind an interaction.
+
+The carousel also describes itself as a schema.org **ItemList** in JSON-LD, either as positions and URLs or with full post details (headline, image, dates, author) under BlogPosting, Article, NewsArticle, CreativeWork or Product. That is what lets a search engine treat the section as an ordered list of articles rather than a cluster of links, and gives generative engines an unambiguous reading of what the section contains and in what order. Set it to None if your SEO plugin already outputs an ItemList for the same section.
+
+= Works with Zen GEO =
+
+If [Zen GEO](https://wordpress.org/plugins/zen-geo/) is installed, the two plugins cooperate rather than compete:
+
+* Zen GEO prints its page graph in `<head>`; Zen Blogger prints its list where the widget renders. They never overwrite each other.
+* Zen Blogger uses **Zen GEO's own node identity** (`permalink#article`), so a post described in a carousel and the same post described by Zen GEO on its own page resolve to one node instead of two competing descriptions of the same URL.
+* The carousel's list attaches to Zen GEO's page node with `isPartOf`, so the output reads as one connected graph.
+* Detection is at runtime, so load order never matters. Turn the integration off with the `zenblog_zengeo_integration` filter.
+
+Neither plugin requires the other.
+
+= Developer notes =
+
+* `zenblog_query_args` — modify the WP_Query arguments before the query runs.
+* `zenblog_schema_graph` — alter the JSON-LD graph, or return an empty array to suppress it.
+* `zenblog_zengeo_integration` — disable the Zen GEO linkage.
+* `zenblog_reading_speed` — words per minute for the reading-time estimate (default 200).
+* `zenblog_term_choices_limit` / `zenblog_post_choices_limit` — how many terms and posts the panel offers.
+
+== Installation ==
+
+1. Install and activate Elementor.
+2. Upload the `zen-blogger` folder to `/wp-content/plugins/`, or install the zip through Plugins → Add New.
+3. Activate Zen Blogger.
+4. Edit a page with Elementor and drag **Blog Carousel** or **Posts** from the *Zen Blogger* category onto the canvas.
+
+== Frequently Asked Questions ==
+
+= Does it need Elementor Pro? =
+
+No. Zen Blogger works with free Elementor.
+
+= Why can't I remove the play/pause button? =
+
+Because autoplay is on. WCAG 2.2.2 requires a way to stop content that moves automatically, so the button is rendered whenever autoplay is enabled. You can position it in any corner and set it to appear on hover and keyboard focus. Turning autoplay off removes it.
+
+= Does it work with custom post types? =
+
+Yes. Any public post type with a UI can be used as the source, and its public taxonomies appear as filters.
+
+= Will it slow my site down? =
+
+The CSS and JS are only enqueued on pages that actually contain the widget, and the carousel reuses the Swiper library Elementor already loads rather than adding another one.
+
+= Does it support RTL? =
+
+Yes. The layout uses logical properties throughout and the carousel direction follows the site's text direction.
+
+== Screenshots ==
+
+1. The Posts widget — grid layout with a filter bar and Load More.
+2. The Classic skin with dots and outside arrows.
+3. The Overlay skin with a ticker.
+4. The Query panel — taxonomy include and exclude filters.
+5. The Accessibility panel — play/pause and reduced-motion controls.
+6. Style controls for the card, image and read-more button.
+
+== Changelog ==
+
+= 1.2.2 =
+* New: excerpts are built from paragraphs only, so headings, list items, captions and table cells no longer end up in the card text. Choose "all content" if you preferred the old behaviour.
+* New: meta can sit under the title or at the foot of the card, with an optional divider you can colour, thicken and space.
+* Changed: headings no longer gain an underline on hover. The Title hover colour control is there if you want an affordance.
+* Fixed: the focus ring used currentColor, so on a focused pill or button — where the text is white — it was invisible against a light card. It now draws a two-tone ring that contrasts on any background, and uses the system Highlight colour in forced-colors mode.
+* Fixed: changing Columns in the editor did not re-render the widget, leaving the Feature layout's column span stale until another control forced a redraw.
+
+= 1.2.1 =
+* Fixed: the Posts widget never applied the skin class, so Overlay, Overlap, Side, Editorial and Minimal all rendered as Classic.
+* Fixed: combining two taxonomy filters silently applied only the first. The AJAX endpoint sanitised the filter query with a function that turns "&" into "&amp;".
+* Fixed: a non-Latin search term was destroyed in transit for the same reason, by a sanitiser that strips percent-encoding.
+* Fixed: theme link styling underlined card titles, term pills and the Read More button. Card link rules now out-specify the theme without !important.
+* Added a Respect "Reduce Motion" control to the Posts widget, matching the carousel.
+
+= 1.2.0 =
+* New: card templates. Pick any saved Elementor template and it is rendered once per post, with that post in context — a loop item without Elementor Pro.
+* New: nine dynamic tags (title, excerpt, date, terms, author, reading time, comment count, URL, featured image) so template cards can actually read the post. Free Elementor ships none of its own.
+* Rebuilt the Posts filter as a real search-and-filter form: keyword search, several taxonomies at once, buttons / checkboxes / dropdowns, a sort control, live result count and a Clear button. It is a GET form, so it works with JavaScript off and every view has a shareable URL.
+* Fixed: the masonry Row Gap control had no effect, because row-gap does nothing on a CSS-columns layout.
+* Fixed: a feature card could span every column, leaving nothing beside it. The span is now capped against the column count, per breakpoint.
+* Fixed: cards did not stretch to fill their grid cell, so rows of mixed-length posts did not line up.
+* Fixed: the address bar could accumulate duplicate filter parameters.
+* Fixed: the Clear button never appeared after an AJAX update.
+
+= 1.1.0 =
+* New **Posts** widget: grid, masonry, list and feature layouts with page numbers, previous/next, Load More or infinite scroll.
+* AJAX pagination and an optional taxonomy filter bar, both built on real links so they work without JavaScript.
+* Result counts are announced, the grid reports its busy state, and focus moves to the first new post after a visitor-initiated load.
+* Card, query and style code now lives in one shared implementation used by both widgets.
+* The Posts script is a separate file, so a page with only a carousel never downloads it.
+
+= 1.0.1 =
+* Fixed a fatal error in the Elementor editor. get_style_depends() read widget settings, but Elementor also calls it on widget types, which have none — producing "sanitize_settings(): Argument #1 must be of type array, null given" and a white screen. The icon stylesheet is now enqueued at render time instead.
+
+= 1.0.0 =
+* Initial release: the Blog Carousel widget with six skins, a full query builder, Swiper-based motion, and WCAG 2.2 AA controls.
+* schema.org ItemList output in JSON-LD, with a Zen GEO integration that shares node identity instead of duplicating it.
+
+== Upgrade Notice ==
+
+= 1.2.2 =
+Cleaner excerpts, meta positioning, and a focus ring that is actually visible.
+
+= 1.2.1 =
+Fixes card skins being ignored in the Posts widget and multi-taxonomy filtering. Recommended for everyone.
+
+= 1.2.0 =
+Adds card templates, dynamic tags and a real search-and-filter bar, and fixes several grid layout bugs.
+
+= 1.1.0 =
+Adds the Posts widget. No changes are needed to existing carousels.
+
+= 1.0.1 =
+Fixes a fatal error that could white-screen the Elementor editor. Update immediately.
+
+= 1.0.0 =
+First release.

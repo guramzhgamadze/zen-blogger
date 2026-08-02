@@ -1,0 +1,1102 @@
+/**
+ * Zen Blogger — Blog Carousel
+ *
+ * Colours are deliberately absent from resting and state rules: every colour is an
+ * Elementor control, so anything painted here would be a default the user cannot
+ * switch off. What lives here is structure, layout and motion only.
+ */
+
+/* ------------------------------------------------------------------ *
+ * Shell
+ * ------------------------------------------------------------------ */
+
+.zenblog {
+	--zenblog-arrow-offset: 12px;
+	--zenblog-dot-gap: 6px;
+
+	position: relative;
+	display: grid;
+	grid-template-columns: 1fr;
+	grid-template-areas:
+		"viewport"
+		"footer";
+	min-width: 0;
+}
+
+.zenblog__viewport {
+	grid-area: viewport;
+	position: relative;
+	min-width: 0;
+}
+
+.zenblog__track {
+	width: 100%;
+	min-width: 0;
+}
+
+.zenblog__footer {
+	grid-area: footer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 0;
+}
+
+/* Screen-reader-only text. Matches core's .screen-reader-text behaviour without
+   depending on the theme having defined it. */
+.zenblog__sr {
+	position: absolute !important;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0 0 0 0);
+	clip-path: inset(50%);
+	white-space: nowrap;
+	border: 0;
+}
+
+/* ------------------------------------------------------------------ *
+ * No-JS / pre-init fallback
+ *
+ * Until Swiper initialises (or if it never loads at all) the track stays a
+ * horizontally scrollable, snapping row. The carousel is usable either way.
+ * ------------------------------------------------------------------ */
+
+.zenblog .zenblog__track:not(.swiper-initialized) {
+	overflow-x: auto;
+	scroll-snap-type: x mandatory;
+	scrollbar-width: thin;
+}
+
+.zenblog .zenblog__track:not(.swiper-initialized) .zenblog__slides {
+	display: flex;
+	gap: 24px;
+}
+
+.zenblog .zenblog__track:not(.swiper-initialized) .zenblog__slide {
+	flex: 0 0 auto;
+	width: min(340px, 82%);
+	scroll-snap-align: start;
+}
+
+/* Controls that only mean something once Swiper is driving the track. The
+   --ready class is added by the script after a successful init, so a failed or
+   blocked script leaves no dead buttons behind. */
+.zenblog:not(.zenblog--ready) .zenblog__arrows,
+.zenblog:not(.zenblog--ready) .zenblog__footer,
+.zenblog:not(.zenblog--ready) .zenblog__playpause {
+	display: none;
+}
+
+/* ------------------------------------------------------------------ *
+ * Slides & cards
+ * ------------------------------------------------------------------ */
+
+.zenblog__slide {
+	min-width: 0;
+	height: auto;
+}
+
+.zenblog--equal-height .swiper-slide {
+	height: auto;
+}
+
+.zenblog--equal-height .zenblog__card {
+	height: 100%;
+}
+
+.zenblog__card {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	overflow: hidden;
+	transition-property: transform, background-color, border-color, box-shadow;
+	transition-timing-function: ease;
+	transition-duration: 0.3s;
+}
+
+.zenblog__body {
+	display: flex;
+	flex-direction: column;
+	flex: 1 1 auto;
+	gap: 0.6rem;
+	min-width: 0;
+	padding: 1.25rem;
+}
+
+/* Elements that must stay clickable above a stretched card link. */
+.zenblog__terms,
+.zenblog__meta a,
+.zenblog__more {
+	position: relative;
+	z-index: 2;
+}
+
+/* ------------------------------------------------------------------ *
+ * Media
+ * ------------------------------------------------------------------ */
+
+.zenblog__media {
+	position: relative;
+	display: block;
+	flex: 0 0 auto;
+	overflow: hidden;
+	aspect-ratio: 1.6;
+}
+
+.zenblog__media img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	transition: transform 0.4s ease, filter 0.4s ease;
+}
+
+/* Overlay layer — paints nothing until the overlay control is set. */
+.zenblog__media::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	transition: background 0.3s ease;
+}
+
+.zenblog__badge {
+	position: absolute;
+	inset-block-start: 12px;
+	inset-inline-start: 12px;
+	z-index: 2;
+	padding: 0.25em 0.75em;
+	font-size: 0.75em;
+	line-height: 1.6;
+	border-radius: 999px;
+}
+
+/* ------------------------------------------------------------------ *
+ * Text blocks
+ * ------------------------------------------------------------------ */
+
+.zenblog__terms {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+}
+
+.zenblog__term {
+	display: inline-block;
+	text-decoration: none;
+	line-height: 1.4;
+}
+
+.zenblog__media .zenblog__terms {
+	position: absolute;
+	inset-block-end: 12px;
+	inset-inline-start: 12px;
+	z-index: 2;
+}
+
+.zenblog__title {
+	margin: 0;
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+
+.zenblog__title a {
+	text-decoration: none;
+	color: inherit;
+}
+
+.zenblog__stretch::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+}
+
+.zenblog__meta {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.5rem;
+	min-width: 0;
+	font-size: 0.875em;
+}
+
+.zenblog__meta-item {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4em;
+	min-width: 0;
+}
+
+/* Meta pinned to the foot of the card, optionally with a rule above it. The
+   resting divider colour is mixed from the card's own text colour so it works on
+   light and dark cards alike; the Divider Color control overrides it. */
+.zenblog__meta--bottom {
+	margin-block-start: auto;
+	padding-block-start: 0.75rem;
+}
+
+.zenblog__meta--divided {
+	border-block-start: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+}
+
+/* The Read More button also claims margin-block-start:auto. When meta sits at the
+   bottom the button must stop pushing, or the two fight for the same space. */
+.zenblog__body:has(.zenblog__meta--bottom) .zenblog__more {
+	margin-block-start: 0;
+}
+
+.zenblog__avatar {
+	border-radius: 50%;
+	flex: 0 0 auto;
+	width: 24px;
+	height: 24px;
+}
+
+.zenblog__excerpt {
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+
+.zenblog__more {
+	display: inline-flex;
+	align-items: center;
+	align-self: var(--zenblog-more-align, flex-start);
+	gap: 0.5em;
+	margin-block-start: auto;
+	text-decoration: none;
+	line-height: 1.4;
+	transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.zenblog__more-icon {
+	display: inline-flex;
+	transition: transform 0.2s ease;
+}
+
+.zenblog__more:hover .zenblog__more-icon {
+	transform: translateX(0.2em);
+}
+
+.zenblog__empty {
+	margin: 0;
+}
+
+.zenblog__index {
+	font-size: 2.5em;
+	font-weight: 700;
+	line-height: 1;
+	opacity: 0.25;
+}
+
+/* ------------------------------------------------------------------ *
+ * Skins
+ * ------------------------------------------------------------------ */
+
+/* Overlay — text sits on the image. */
+.zenblog--skin-overlay .zenblog__card {
+	display: grid;
+	grid-template-areas: "stack";
+}
+
+.zenblog--skin-overlay .zenblog__media,
+.zenblog--skin-overlay .zenblog__body {
+	grid-area: stack;
+}
+
+.zenblog--skin-overlay .zenblog__media {
+	height: 100%;
+	aspect-ratio: 1.1;
+}
+
+.zenblog--skin-overlay .zenblog__body {
+	position: relative;
+	z-index: 2;
+	justify-content: flex-end;
+}
+
+/*
+ * Resting look for the overlay skin, not a control default: text sits directly on
+ * a photograph, so without a scrim it is unreadable on anything light. The Content
+ * Background control overrides this, and the Readability Scrim switch removes it
+ * entirely — so it is never something the user is stuck with.
+ */
+.zenblog--scrim .zenblog__body {
+	color: #fff;
+	background-image: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.35) 45%, rgba(0, 0, 0, 0));
+}
+
+.zenblog--scrim .zenblog__title a,
+.zenblog--scrim .zenblog__meta,
+.zenblog--scrim .zenblog__excerpt {
+	color: inherit;
+}
+
+/* Overlap — the text block is lifted over the bottom of the image. */
+.zenblog--skin-overlap .zenblog__body {
+	position: relative;
+	z-index: 2;
+	margin-block-start: -3rem;
+	margin-inline: 1rem;
+	border-radius: inherit;
+}
+
+.zenblog--skin-overlap .zenblog__card {
+	overflow: visible;
+}
+
+.zenblog--skin-overlap .zenblog__media {
+	border-radius: inherit;
+	overflow: hidden;
+}
+
+/* Side by side. */
+.zenblog--skin-side .zenblog__card {
+	flex-direction: row;
+	align-items: stretch;
+}
+
+.zenblog--skin-side.zenblog--media-end .zenblog__card {
+	flex-direction: row-reverse;
+}
+
+.zenblog--skin-side .zenblog__media {
+	flex: 0 0 40%;
+	aspect-ratio: auto;
+}
+
+.zenblog--skin-side .zenblog__body {
+	justify-content: center;
+}
+
+@media (max-width: 543px) {
+	.zenblog--skin-side .zenblog__card,
+	.zenblog--skin-side.zenblog--media-end .zenblog__card {
+		flex-direction: column;
+	}
+
+	.zenblog--skin-side .zenblog__media {
+		flex-basis: auto;
+		aspect-ratio: 1.6;
+	}
+}
+
+/* Editorial — oversized running number. */
+.zenblog--skin-editorial .zenblog__index {
+	order: -1;
+}
+
+/* ------------------------------------------------------------------ *
+ * Arrows
+ * ------------------------------------------------------------------ */
+
+.zenblog__arrows {
+	display: flex;
+	gap: 8px;
+}
+
+.zenblog__arrow {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 auto;
+	width: 44px;
+	height: 44px;
+	padding: 0;
+	font-size: 18px;
+	line-height: 1;
+	background: none;
+	border: 0;
+	border-radius: 50%;
+	cursor: pointer;
+	color: inherit;
+	transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+}
+
+.zenblog__arrow svg {
+	width: 1em;
+	height: 1em;
+	fill: currentColor;
+}
+
+/* The built-in chevron is stroked, not filled. */
+.zenblog__arrow .zenblog__chevron {
+	fill: none;
+	stroke: currentColor;
+}
+
+/* Swiper puts "previous" on the right in RTL, so the chevron must follow. */
+[dir="rtl"] .zenblog__arrow .zenblog__chevron {
+	transform: scaleX(-1);
+}
+
+.zenblog__arrow[disabled],
+.zenblog__arrow.swiper-button-disabled {
+	opacity: 0.35;
+	cursor: default;
+	pointer-events: none;
+}
+
+/* Over the slides. */
+.zenblog--arrows-inside .zenblog__arrows {
+	grid-area: viewport;
+	align-items: center;
+	justify-content: space-between;
+	padding-inline: var(--zenblog-arrow-offset);
+	pointer-events: none;
+	z-index: 3;
+}
+
+.zenblog--arrows-inside .zenblog__arrow {
+	pointer-events: auto;
+}
+
+/* Outside the slides — the buttons become grid items of their own. */
+.zenblog--arrows-outside {
+	grid-template-columns: auto minmax(0, 1fr) auto;
+	grid-template-areas:
+		"prev viewport next"
+		"footer footer footer";
+	column-gap: var(--zenblog-arrow-offset);
+}
+
+.zenblog--arrows-outside .zenblog__arrows {
+	display: contents;
+}
+
+.zenblog--arrows-outside .zenblog__arrow--prev {
+	grid-area: prev;
+	align-self: center;
+}
+
+.zenblog--arrows-outside .zenblog__arrow--next {
+	grid-area: next;
+	align-self: center;
+}
+
+/* On a narrow screen two 44px buttons plus gaps eat nearly half the width, so
+   outside arrows fold back over the slides rather than shrinking the card. */
+@media (max-width: 600px) {
+	.zenblog--arrows-outside {
+		grid-template-columns: 1fr;
+		grid-template-areas:
+			"viewport"
+			"footer";
+		column-gap: 0;
+	}
+
+	.zenblog--arrows-outside .zenblog__arrows {
+		display: flex;
+		grid-area: viewport;
+		align-items: center;
+		justify-content: space-between;
+		padding-inline: var(--zenblog-arrow-offset);
+		pointer-events: none;
+		z-index: 3;
+	}
+
+	.zenblog--arrows-outside .zenblog__arrow {
+		pointer-events: auto;
+	}
+
+	.zenblog--arrows-outside .zenblog__arrow--prev,
+	.zenblog--arrows-outside .zenblog__arrow--next {
+		grid-area: auto;
+		align-self: auto;
+	}
+}
+
+/* Above, aligned to the end. */
+.zenblog--arrows-top {
+	grid-template-areas:
+		"head"
+		"viewport"
+		"footer";
+}
+
+.zenblog--arrows-top .zenblog__arrows {
+	grid-area: head;
+	justify-self: end;
+	margin-block-end: 1rem;
+}
+
+/* Below, beside the pagination. */
+.zenblog--arrows-bottom {
+	grid-template-columns: minmax(0, 1fr) auto;
+	grid-template-areas:
+		"viewport viewport"
+		"footer arrows";
+	column-gap: 1rem;
+}
+
+.zenblog--arrows-bottom .zenblog__arrows {
+	grid-area: arrows;
+	align-self: center;
+	margin-block-start: 20px;
+}
+
+.zenblog--arrows-bottom .zenblog__footer {
+	justify-content: flex-start;
+}
+
+/* ------------------------------------------------------------------ *
+ * Pagination
+ * ------------------------------------------------------------------ */
+
+.zenblog__footer {
+	margin-block-start: 20px;
+}
+
+.zenblog__pagination {
+	position: static;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-wrap: wrap;
+	gap: var(--zenblog-dot-gap);
+	width: 100%;
+	min-width: 0;
+}
+
+.zenblog__pagination .swiper-pagination-bullet {
+	margin: 0;
+	width: 8px;
+	height: 8px;
+	opacity: 0.4;
+	transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.zenblog__pagination .swiper-pagination-bullet-active {
+	opacity: 1;
+}
+
+.zenblog__pagination .swiper-pagination-bullet:focus-visible {
+	outline: 2px solid currentColor;
+	outline-offset: 3px;
+}
+
+/* Progress bar / scrollbar variants need a track height and no flex layout. */
+.zenblog--pagination-progressbar .zenblog__pagination,
+.zenblog--pagination-scrollbar .zenblog__pagination {
+	display: block;
+	position: relative;
+	height: 4px;
+	border-radius: 999px;
+	overflow: hidden;
+}
+
+.zenblog--pagination-progressbar .swiper-pagination-progressbar-fill {
+	border-radius: 999px;
+}
+
+.zenblog--pagination-scrollbar .swiper-scrollbar-drag {
+	border-radius: 999px;
+}
+
+.zenblog--pagination-fraction .zenblog__pagination {
+	font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------------ *
+ * Play / pause — WCAG 2.2.2 control for autoplaying content
+ * ------------------------------------------------------------------ */
+
+.zenblog__playpause {
+	grid-area: viewport;
+	z-index: 4;
+	align-self: end;
+	justify-self: end;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 44px;
+	height: 44px;
+	margin: 12px;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	cursor: pointer;
+	color: inherit;
+	background: none;
+	transition: background 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+}
+
+.zenblog--playpause-top-left .zenblog__playpause {
+	align-self: start;
+	justify-self: start;
+}
+
+.zenblog--playpause-top-right .zenblog__playpause {
+	align-self: start;
+	justify-self: end;
+}
+
+.zenblog--playpause-bottom-left .zenblog__playpause {
+	align-self: end;
+	justify-self: start;
+}
+
+/* "Show on hover" must never hide it from the keyboard. */
+.zenblog--playpause-hover .zenblog__playpause {
+	opacity: 0;
+}
+
+.zenblog--playpause-hover:hover .zenblog__playpause,
+.zenblog--playpause-hover:focus-within .zenblog__playpause,
+.zenblog--playpause-hover .zenblog__playpause:focus-visible {
+	opacity: 1;
+}
+
+.zenblog__playpause-icon {
+	position: relative;
+	display: block;
+	width: 0.9em;
+	height: 0.9em;
+	font-size: 18px;
+}
+
+/* Pause glyph — two bars, drawn from currentColor so it follows the icon control. */
+.zenblog__playpause:not(.zenblog__playpause--paused) .zenblog__playpause-icon::before,
+.zenblog__playpause:not(.zenblog__playpause--paused) .zenblog__playpause-icon::after {
+	content: "";
+	position: absolute;
+	inset-block: 0;
+	width: 0.28em;
+	background: currentColor;
+}
+
+.zenblog__playpause:not(.zenblog__playpause--paused) .zenblog__playpause-icon::before {
+	inset-inline-start: 0.1em;
+}
+
+.zenblog__playpause:not(.zenblog__playpause--paused) .zenblog__playpause-icon::after {
+	inset-inline-end: 0.1em;
+}
+
+/* Play glyph — a triangle. */
+.zenblog__playpause--paused .zenblog__playpause-icon::before {
+	content: "";
+	position: absolute;
+	inset-block-start: 50%;
+	inset-inline-start: 55%;
+	translate: -50% -50%;
+	border-block: 0.45em solid transparent;
+	border-inline-start: 0.7em solid currentColor;
+	border-inline-end: 0;
+}
+
+/* ------------------------------------------------------------------ *
+ * Focus visibility — never removed, only restyled
+ * ------------------------------------------------------------------ */
+
+/*
+ * Focus ring.
+ *
+ * currentColor alone is not safe here: a focused term pill or Read More button
+ * sets its own colour to white, so the ring came out white on a white card —
+ * invisible. The two-stop shadow is a sandwich instead: a ring of the page's own
+ * background colour, then a ring of the page's own text colour outside it, so
+ * there is always contrast whatever the element is coloured. Canvas / CanvasText
+ * are CSS system colours, so this follows light and dark themes automatically.
+ */
+.zenblog a:focus-visible,
+.zenblog button:focus-visible,
+.zenblog input:focus-visible,
+.zenblog select:focus-visible,
+.zenblog .zenblog__check input:focus-visible + label {
+	outline: 2px solid transparent;
+	outline-offset: 2px;
+	box-shadow: 0 0 0 2px Canvas, 0 0 0 4px CanvasText;
+}
+
+/*
+ * Forced-colors mode drops box-shadow entirely, so the outline has to carry the
+ * indicator there — Highlight is the system's own focus colour.
+ */
+@media (forced-colors: active) {
+	.zenblog a:focus-visible,
+	.zenblog button:focus-visible,
+	.zenblog input:focus-visible,
+	.zenblog select:focus-visible,
+	.zenblog .zenblog__check input:focus-visible + label {
+		outline-color: Highlight;
+	}
+}
+
+.zenblog__card:focus-within {
+	z-index: 2;
+}
+
+/* ------------------------------------------------------------------ *
+ * Reduced motion — only when the widget opts in
+ * ------------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+	.zenblog--respect-motion .zenblog__card,
+	.zenblog--respect-motion .zenblog__media img,
+	.zenblog--respect-motion .zenblog__more,
+	.zenblog--respect-motion .zenblog__more-icon,
+	.zenblog--respect-motion .zenblog__arrow,
+	.zenblog--respect-motion .zenblog__playpause,
+	.zenblog--respect-motion .swiper-wrapper {
+		transition-duration: 0.01ms;
+		animation-duration: 0.01ms;
+	}
+
+	.zenblog--respect-motion .zenblog__card:hover,
+	.zenblog--respect-motion .zenblog__card:focus-within {
+		transform: none;
+	}
+
+	.zenblog--respect-motion .zenblog__card:hover .zenblog__media img,
+	.zenblog--respect-motion .zenblog__card:focus-within .zenblog__media img {
+		transform: none;
+	}
+}
+
+/* ------------------------------------------------------------------ *
+ * Editor preview — Swiper is not initialised inside the panel preview until
+ * the widget is ready, so keep the fallback row from looking broken.
+ * ------------------------------------------------------------------ */
+
+.elementor-editor-active .zenblog__track:not(.swiper-initialized) {
+	overflow-x: hidden;
+}
+
+/* ================================================================== *
+ * Posts widget — grid, masonry, list, feature
+ * ================================================================== */
+
+.zenblog-posts {
+	display: block;
+}
+
+.zenblog__grid {
+	--zenblog-columns: 3;
+	display: grid;
+	grid-template-columns: repeat(var(--zenblog-columns), minmax(0, 1fr));
+	column-gap: 24px;
+	row-gap: 24px;
+	min-width: 0;
+}
+
+.zenblog__item {
+	min-width: 0;
+	/* Programmatic focus target after an AJAX page — never draw a ring for it,
+	   the visible move is the page change itself. */
+	outline: none;
+}
+
+.zenblog--layout-list .zenblog__grid {
+	grid-template-columns: minmax(0, 1fr);
+}
+
+/* Cards fill their cell so a row of mixed-length posts still lines up. Masonry is
+   excluded on purpose — natural height is the whole point of that layout. */
+.zenblog--layout-grid .zenblog__card,
+.zenblog--layout-feature .zenblog__card,
+.zenblog--layout-list .zenblog__card {
+	height: 100%;
+}
+
+/* Masonry via CSS columns: no JS, no layout thrash, no CLS when images load.
+   row-gap does nothing on a columns layout, so the Row Gap control publishes
+   --zenblog-row-gap and the item margin consumes it. */
+.zenblog--layout-masonry .zenblog__grid {
+	display: block;
+	column-count: var(--zenblog-columns);
+}
+
+.zenblog--layout-masonry .zenblog__item {
+	break-inside: avoid;
+	margin-block-end: var(--zenblog-row-gap, 24px);
+}
+
+/* Feature span is capped against the column count in PHP, per breakpoint. */
+.zenblog--layout-feature .zenblog__item:first-child {
+	grid-column: span var(--zenblog-fspan-m, 1);
+}
+
+.zenblog--layout-feature .zenblog__item:first-child .zenblog__media {
+	aspect-ratio: 2.1;
+}
+
+@media (min-width: 768px) {
+	.zenblog--layout-feature .zenblog__item:first-child {
+		grid-column: span var(--zenblog-fspan-t, 1);
+	}
+}
+
+@media (min-width: 1025px) {
+	.zenblog--layout-feature .zenblog__item:first-child {
+		grid-column: span var(--zenblog-fspan-d, 2);
+	}
+}
+
+/* ------------------------------------------------------------------ *
+ * Search & filter bar
+ *
+ * A real <form> of real inputs. The radio/checkbox pills hide the native
+ * control visually but never from assistive tech or the keyboard — the input
+ * stays focusable and its label is the visible target.
+ * ------------------------------------------------------------------ */
+
+.zenblog__filters {
+	margin-block-end: 32px;
+	min-width: 0;
+}
+
+.zenblog__filter-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	gap: 12px;
+	min-width: 0;
+}
+
+.zenblog__filter-field {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	min-width: 0;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+.zenblog__filter-field--search {
+	flex: 1 1 14rem;
+	min-width: 0;
+}
+
+.zenblog__filter-field--checks,
+.zenblog__filter-field--links {
+	flex-wrap: wrap;
+}
+
+.zenblog__filter-label {
+	display: block;
+	font-size: 0.875em;
+	line-height: 1.4;
+	white-space: nowrap;
+}
+
+.zenblog__search-input,
+.zenblog__select {
+	min-height: 44px;
+	min-width: 0;
+	max-width: 100%;
+	padding: 0.5em 0.75em;
+	font: inherit;
+	line-height: 1.4;
+}
+
+/* Themes style form controls with element+attribute selectors such as
+   input[type="search"]:focus (0-2-1), which outrank a bare class. Qualifying by
+   element keeps our controls winning without reaching for !important, which
+   would lock the user's own Elementor controls out. */
+input[type="search"].zenblog__search-input {
+	flex: 1 1 auto;
+	width: 100%;
+}
+
+.zenblog__check {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4em;
+	min-width: 0;
+}
+
+.zenblog__check label {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4em;
+	line-height: 1.4;
+	cursor: pointer;
+}
+
+/* Pill style: the native radio is taken out of the visual flow but stays in the
+   accessibility tree and the tab order, so arrow keys still move through the
+   group and the state is announced as selected. */
+.zenblog__check--pill input {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip: rect(0 0 0 0);
+	clip-path: inset(50%);
+	white-space: nowrap;
+}
+
+.zenblog__check--pill label {
+	padding: 0.5em 1em;
+	min-height: 44px;
+	transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Focus must follow the hidden input onto its visible label, or keyboard users
+   get no focus indicator at all. */
+
+
+.zenblog__filter-count {
+	font-size: 0.85em;
+	opacity: 0.7;
+}
+
+.zenblog__filter-submit,
+.zenblog__filter-reset {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 44px;
+	padding: 0.5em 1em;
+	font: inherit;
+	line-height: 1.4;
+	text-decoration: none;
+	cursor: pointer;
+	background: none;
+	border: 0;
+}
+
+.zenblog__result-count {
+	margin: 12px 0 0;
+	font-size: 0.875em;
+	opacity: 0.8;
+}
+
+@media (max-width: 600px) {
+	.zenblog__filter-row {
+		align-items: stretch;
+	}
+
+	.zenblog__filter-field--search {
+		flex-basis: 100%;
+	}
+}
+
+/* ------------------------------------------------------------------ *
+ * Pagination
+ * ------------------------------------------------------------------ */
+
+.zenblog__nav {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	margin-block-start: 40px;
+}
+
+.zenblog__page,
+.zenblog__more-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 44px;
+	min-height: 44px;
+	padding: 0.5em 1em;
+	text-decoration: none;
+	line-height: 1.4;
+	cursor: pointer;
+	transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Busy state: dim the grid but keep it readable, and block clicks on stale rows. */
+.zenblog__grid[aria-busy="true"] {
+	opacity: 0.55;
+	pointer-events: none;
+	transition: opacity 0.15s ease;
+}
+
+.zenblog__more-btn[aria-disabled="true"] {
+	opacity: 0.5;
+	pointer-events: none;
+}
+
+.zenblog__nav .zenblog__spinner {
+	display: none;
+	width: 1em;
+	height: 1em;
+	border: 2px solid currentColor;
+	border-inline-end-color: transparent;
+	border-radius: 50%;
+	animation: zenblog-spin 0.7s linear infinite;
+}
+
+.zenblog--loading .zenblog__spinner {
+	display: inline-block;
+}
+
+@keyframes zenblog-spin {
+	to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.zenblog__spinner {
+		animation-duration: 2s;
+	}
+
+	.zenblog__grid[aria-busy="true"] {
+		transition: none;
+	}
+}
+
+/* ------------------------------------------------------------------ *
+ * Loop-item templates
+ * ------------------------------------------------------------------ */
+
+/* The template carries its own design; this only makes it fill the slide
+   or grid cell so equal-height and masonry still behave. */
+.zenblog__template {
+	height: 100%;
+	min-width: 0;
+}
+
+.zenblog__template > .elementor {
+	height: 100%;
+}
+
+.zenblog__template-notice {
+	padding: 1.5rem;
+	text-align: center;
+	border: 1px dashed currentColor;
+	opacity: 0.6;
+	font-size: 0.875em;
+}
+
+/* ------------------------------------------------------------------ *
+ * Theme link-decoration defence
+ *
+ * Astra (and many themes) ship a rule like
+ *   .ast-single-post .entry-content a { text-decoration: underline; }
+ * at specificity 0-2-1, which outranks a bare .zenblog__term (0-1-0) or
+ * .zenblog__title a (0-1-1) — so every card link came out underlined.
+ *
+ * The root class is doubled to reach 0-3-1, which beats the theme without
+ * !important. Elementor's own generated control CSS sits at 0-4-0 or higher,
+ * so the user's Typography control can still turn an underline back on.
+ * ------------------------------------------------------------------ */
+
+.zenblog.zenblog .zenblog__card a,
+.zenblog.zenblog .zenblog__title a,
+.zenblog.zenblog a.zenblog__term,
+.zenblog.zenblog a.zenblog__more,
+.zenblog.zenblog .zenblog__meta a,
+.zenblog.zenblog .zenblog__filters a,
+.zenblog.zenblog .zenblog__nav a,
+.zenblog.zenblog .zenblog__check label {
+	text-decoration: none;
+}
+
+/* No hover underline on the heading — that is a decision for the site, not a
+   default the widget imposes. The Title "Color — hover" control provides the
+   affordance for anyone who wants one. Meta links keep it: they are inline text
+   links inside a sentence, where the underline is the only affordance there is. */
+.zenblog.zenblog .zenblog__meta a:hover {
+	text-decoration: underline;
+}

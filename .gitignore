@@ -1,0 +1,19 @@
+# Build output — the distributable zip is produced from an allowlist, never committed.
+/dist/
+*.zip
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*~
+
+# Local tooling
+/node_modules/
+/vendor/
+.phpcs-cache
+.phpunit.result.cache
+
+# Generated translation binaries (the .pot is committed, .mo is built)
+languages/*.mo
