@@ -236,18 +236,11 @@
    resting divider colour is mixed from the card's own text colour so it works on
    light and dark cards alike; the Divider Color control overrides it. */
 .zenblog__meta--bottom {
-	margin-block-start: auto;
 	padding-block-start: 0.75rem;
 }
 
 .zenblog__meta--divided {
 	border-block-start: 1px solid color-mix(in srgb, currentColor 18%, transparent);
-}
-
-/* The Read More button also claims margin-block-start:auto. When meta sits at the
-   bottom the button must stop pushing, or the two fight for the same space. */
-.zenblog__body:has(.zenblog__meta--bottom) .zenblog__more {
-	margin-block-start: 0;
 }
 
 .zenblog__avatar {
@@ -640,11 +633,20 @@
 	justify-self: start;
 }
 
-/* "Show on hover" must never hide it from the keyboard. */
+/*
+ * Kept out of sight, never out of reach. WCAG 2.2.2 wants a mechanism to stop
+ * moving content — it does not demand a permanently visible button — so the
+ * default hides it until a keyboard user Tabs to it, at which point it appears.
+ * opacity, not display:none or visibility:hidden, because those would take it
+ * out of the tab order and defeat the point.
+ */
+.zenblog--playpause-focus .zenblog__playpause,
 .zenblog--playpause-hover .zenblog__playpause {
 	opacity: 0;
 }
 
+.zenblog--playpause-focus .zenblog__playpause:focus-visible,
+.zenblog--playpause-focus:focus-within .zenblog__playpause,
 .zenblog--playpause-hover:hover .zenblog__playpause,
 .zenblog--playpause-hover:focus-within .zenblog__playpause,
 .zenblog--playpause-hover .zenblog__playpause:focus-visible {
@@ -845,19 +847,6 @@
  * stays focusable and its label is the visible target.
  * ------------------------------------------------------------------ */
 
-.zenblog__filters {
-	margin-block-end: 32px;
-	min-width: 0;
-}
-
-.zenblog__filter-row {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: flex-end;
-	gap: 12px;
-	min-width: 0;
-}
-
 .zenblog__filter-field {
 	display: flex;
 	flex-wrap: wrap;
@@ -948,8 +937,7 @@ input[type="search"].zenblog__search-input {
 	opacity: 0.7;
 }
 
-.zenblog__filter-submit,
-.zenblog__filter-reset {
+.zenblog__filter-submit {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -1099,4 +1087,90 @@ input[type="search"].zenblog__search-input {
    links inside a sentence, where the underline is the only affordance there is. */
 .zenblog.zenblog .zenblog__meta a:hover {
 	text-decoration: underline;
+}
+
+/* ------------------------------------------------------------------ *
+ * Filter bar — container and rows (v1.3.1)
+ * ------------------------------------------------------------------ */
+
+/* One container, so background / border / padding have something to sit on. */
+.zenblog__filters {
+	display: flex;
+	flex-direction: column;
+	gap: var(--zenblog-filter-row-gap, 12px);
+	margin-block-end: 32px;
+	min-width: 0;
+}
+
+/* Search owns the top row outright. It was sharing with the filters because it
+   was a flex child of the same row with a basis it could shrink below; giving it
+   its own row makes the result independent of container width, which is why the
+   builder and the page disagreed. */
+.zenblog__filter-row--search {
+	display: block;
+	width: 100%;
+}
+
+.zenblog__filter-row--search .zenblog__filter-field--search {
+	width: 100%;
+}
+
+.zenblog__filter-row--controls {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 12px;
+	min-width: 0;
+}
+
+/* Clear reads as one of the controls, not as a stray text link. */
+.zenblog__filter-reset {
+	display: inline-flex;
+	align-items: center;
+	min-height: 44px;
+	padding: 0.5em 1em;
+	font: inherit;
+	line-height: 1.4;
+	cursor: pointer;
+	background: none;
+	border: 0;
+}
+
+.zenblog__filter-reset[hidden] {
+	display: none;
+}
+
+/* ------------------------------------------------------------------ *
+ * Card foot: read more, then the divider, then meta
+ * ------------------------------------------------------------------ */
+
+/*
+ * The card body may carry align-items from the Content Alignment control, which
+ * shrink-wraps every child to its own content width — that is why the meta rule
+ * stopped where the text stopped instead of spanning the card. Stretching the
+ * meta row (and the divider that is its top border) puts it back.
+ */
+.zenblog__meta--bottom {
+	align-self: stretch;
+	width: 100%;
+}
+
+/*
+ * Read More is pushed to the foot of the card so a short post and a long one
+ * line up, and the meta row sits directly beneath it.
+ */
+.zenblog__body:has(.zenblog__meta--bottom) .zenblog__more {
+	margin-block-start: auto;
+}
+
+.zenblog__body:has(.zenblog__meta--bottom) .zenblog__meta--bottom {
+	margin-block-start: 0;
+}
+
+/* Browsers without :has() still get a sane order — the meta simply keeps its own
+   auto margin and the button sits above it. */
+@supports not selector(:has(*)) {
+	.zenblog__meta--bottom {
+		margin-block-start: auto;
+	}
 }

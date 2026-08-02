@@ -4,7 +4,7 @@ Tags: elementor, carousel, blog, slider, posts
 Requires at least: 6.5
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.3.0
+Stable tag: 1.4.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -116,6 +116,18 @@ Yes. The layout uses logical properties throughout and the carousel direction fo
 
 == Changelog ==
 
+= 1.4.0 =
+* Fixed: with many pages, the numbered paginator was a trap — the window stayed on its first range, so pages beyond it could never be reached. It now shows first and last with an ellipsis, and the server re-renders the window on every AJAX page change.
+* Fixed: the search box shared the top row with the filters on the front end even though it looked right in the editor. It now owns its own full-width row at any container width.
+* Fixed: the meta divider stopped where the text stopped, because Content Alignment shrink-wraps every child of the card body. It now spans the card.
+* Fixed: Read More sits at the foot of the card, directly above the meta divider, instead of wherever the excerpt happened to end.
+* Removed: the Apply button, for anyone with JavaScript. It now exists only inside <noscript>, so it is genuinely absent rather than hidden.
+* New: the search, filters and sort share one container with its own background, border, radius, padding and row spacing.
+* New: custom text for the result count, reading time and comment count, each with a %s placeholder.
+* New: meta alignment — left, centre, right or spread.
+* Changed: Clear filters is a button, matching the filter controls rather than reading as a stray link.
+* Changed: the carousel's play/pause button is out of sight by default and appears when a keyboard user reaches it. It still cannot be removed while autoplay is on.
+
 = 1.3.0 =
 * New: sort options are now a repeater. Choose which orders to offer, rename each one, and drag to reorder — the first row is the default.
 * Changed: the Apply button is hidden once the script takes over, because results already update as a filter changes. It is still rendered for visitors without JavaScript, and a new "Apply Automatically" switch turns auto-updating off if you prefer an explicit Apply.
@@ -160,6 +172,9 @@ Yes. The layout uses logical properties throughout and the carousel direction fo
 * schema.org ItemList output in JSON-LD, with a Zen GEO integration that shares node identity instead of duplicating it.
 
 == Upgrade Notice ==
+
+= 1.4.0 =
+Fixes a paginator that could strand visitors on long archives, plus a set of filter-bar and card layout corrections.
 
 = 1.3.0 =
 Editable sort options, and no more redundant Apply button.

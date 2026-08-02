@@ -362,6 +362,40 @@ trait Zen_Blogger_Card_Trait {
 		);
 
 		$this->add_control(
+			'zenblog_reading_time_text',
+			array(
+				'label'       => esc_html__( 'Reading Time Text', 'zen-blogger' ),
+				/* translators: %s is a literal placeholder the user types, not a variable. */
+				'description' => esc_html__( 'Use %s for the number of minutes.', 'zen-blogger' ),
+				'type'        => Controls_Manager::TEXT,
+				'label_block' => true,
+				/* translators: %s: number of minutes. */
+				'placeholder' => esc_html__( '%s min read', 'zen-blogger' ),
+				'condition'   => array(
+					'zenblog_show_meta'  => 'yes',
+					'zenblog_meta_items' => 'reading_time',
+				),
+			)
+		);
+
+		$this->add_control(
+			'zenblog_comments_text',
+			array(
+				'label'       => esc_html__( 'Comment Count Text', 'zen-blogger' ),
+				/* translators: %s is a literal placeholder the user types, not a variable. */
+				'description' => esc_html__( 'Use %s for the number of comments.', 'zen-blogger' ),
+				'type'        => Controls_Manager::TEXT,
+				'label_block' => true,
+				/* translators: %s: number of comments. */
+				'placeholder' => esc_html__( '%s comments', 'zen-blogger' ),
+				'condition'   => array(
+					'zenblog_show_meta'  => 'yes',
+					'zenblog_meta_items' => 'comments',
+				),
+			)
+		);
+
+		$this->add_control(
 			'zenblog_meta_separator',
 			array(
 				'label'     => esc_html__( 'Separator', 'zen-blogger' ),
@@ -1672,6 +1706,35 @@ trait Zen_Blogger_Card_Trait {
 		);
 
 		$this->add_responsive_control(
+			'zenblog_meta_align',
+			array(
+				'label'     => esc_html__( 'Alignment', 'zen-blogger' ),
+				'type'      => Controls_Manager::CHOOSE,
+				'options'   => array(
+					'flex-start'    => array(
+						'title' => esc_html__( 'Left', 'zen-blogger' ),
+						'icon'  => 'eicon-text-align-left',
+					),
+					'center'        => array(
+						'title' => esc_html__( 'Center', 'zen-blogger' ),
+						'icon'  => 'eicon-text-align-center',
+					),
+					'flex-end'      => array(
+						'title' => esc_html__( 'Right', 'zen-blogger' ),
+						'icon'  => 'eicon-text-align-right',
+					),
+					'space-between' => array(
+						'title' => esc_html__( 'Spread', 'zen-blogger' ),
+						'icon'  => 'eicon-text-align-justify',
+					),
+				),
+				'selectors' => array(
+					'{{WRAPPER}} .zenblog__meta' => 'justify-content: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
 			'zenblog_meta_gap',
 			array(
 				'label'      => esc_html__( 'Gap', 'zen-blogger' ),
@@ -2725,10 +2788,12 @@ trait Zen_Blogger_Card_Trait {
 				$count = (int) get_comments_number();
 
 				return '<span class="zenblog__comments">' . esc_html(
-					sprintf(
+					$this->countable_text(
+						$settings,
+						'zenblog_comments_text',
+						$count,
 						/* translators: %s: number of comments. */
-						_n( '%s comment', '%s comments', $count, 'zen-blogger' ),
-						number_format_i18n( $count )
+						_n( '%s comment', '%s comments', $count, 'zen-blogger' )
 					)
 				) . '</span>';
 
@@ -2736,15 +2801,41 @@ trait Zen_Blogger_Card_Trait {
 				$minutes = $this->reading_time( get_the_ID() );
 
 				return '<span class="zenblog__reading-time">' . esc_html(
-					sprintf(
+					$this->countable_text(
+						$settings,
+						'zenblog_reading_time_text',
+						$minutes,
 						/* translators: %s: estimated reading time in minutes. */
-						_n( '%s min read', '%s min read', $minutes, 'zen-blogger' ),
-						number_format_i18n( $minutes )
+						_n( '%s min read', '%s min read', $minutes, 'zen-blogger' )
 					)
 				) . '</span>';
 		}
 
 		return '';
+	}
+
+	/**
+	 * A count string, using the site owner's wording when they supplied one.
+	 *
+	 * @param array  $settings Widget settings.
+	 * @param string $key      Setting holding the template.
+	 * @param int    $count    The number to substitute.
+	 * @param string $fallback Translated plural used when the setting is empty.
+	 * @return string
+	 */
+	private function countable_text( array $settings, $key, $count, $fallback ) {
+		$template = isset( $settings[ $key ] ) ? trim( (string) $settings[ $key ] ) : '';
+
+		if ( '' === $template ) {
+			return sprintf( $fallback, number_format_i18n( $count ) );
+		}
+
+		// str_replace, not sprintf: a stray % in user-typed wording would be fatal.
+		if ( false === strpos( $template, '%s' ) ) {
+			return $template;
+		}
+
+		return str_replace( '%s', number_format_i18n( $count ), $template );
 	}
 
 	/**

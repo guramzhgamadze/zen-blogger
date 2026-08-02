@@ -492,12 +492,13 @@ class Zen_Blogger_Carousel extends Widget_Base {
 			'zenblog_playpause_visibility',
 			array(
 				'label'       => esc_html__( 'Play / Pause Button', 'zen-blogger' ),
-				'description' => esc_html__( 'Only rendered when autoplay is on. It cannot be removed — a moving carousel without a stop control fails WCAG 2.2.2.', 'zen-blogger' ),
+				'description' => esc_html__( 'Only rendered when autoplay is on. It can be kept out of sight, but not removed — a carousel that moves on its own with no way to stop it fails WCAG 2.2.2. "Keyboard only" hides it visually while leaving it reachable by Tab, where it becomes visible.', 'zen-blogger' ),
 				'type'        => Controls_Manager::SELECT,
-				'default'     => 'always',
+				'default'     => 'focus',
 				'options'     => array(
+					'focus'  => esc_html__( 'Keyboard only — appears on focus', 'zen-blogger' ),
+					'hover'  => esc_html__( 'On hover and keyboard focus', 'zen-blogger' ),
 					'always' => esc_html__( 'Always visible', 'zen-blogger' ),
-					'hover'  => esc_html__( 'Visible on hover and keyboard focus', 'zen-blogger' ),
 				),
 				'condition'   => array( 'zenblog_autoplay' => 'yes' ),
 			)
@@ -1051,8 +1052,12 @@ class Zen_Blogger_Carousel extends Widget_Base {
 			$classes[] = 'zenblog--scrim';
 		}
 
-		if ( $autoplay && 'hover' === ( isset( $settings['zenblog_playpause_visibility'] ) ? $settings['zenblog_playpause_visibility'] : 'always' ) ) {
-			$classes[] = 'zenblog--playpause-hover';
+		if ( $autoplay ) {
+			$visibility = isset( $settings['zenblog_playpause_visibility'] ) ? $settings['zenblog_playpause_visibility'] : 'focus';
+
+			if ( in_array( $visibility, array( 'focus', 'hover' ), true ) ) {
+				$classes[] = 'zenblog--playpause-' . $visibility;
+			}
 		}
 
 		if ( $autoplay ) {

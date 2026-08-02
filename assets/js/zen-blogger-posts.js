@@ -172,28 +172,43 @@
 			window.history.pushState( { zenblog: root.id, paged: paged, query: query }, '', url.toString() );
 		}
 
-		function updateNav() {
-			var btn = root.querySelector( '.zenblog__more-btn' );
+		/**
+		 * Replace the paginator with the one the server just rendered.
+		 *
+		 * Patching the existing links by hand cannot work for numbered pages: the
+		 * window slides with the current page, so the set of links itself changes.
+		 * Editing only aria-current left the window frozen on its first range,
+		 * which made every page beyond it unreachable.
+		 *
+		 * @param {string} html Rendered <nav>, empty when there is nothing left to page to.
+		 * @return {void}
+		 */
+		function updateNav( html ) {
+			var nav = root.querySelector( '.zenblog__nav' );
 
-			if ( btn ) {
-				if ( state.paged >= state.maxPages ) {
-					btn.remove();
-				} else {
-					var next = new URL( window.location.href );
-					next.searchParams.set( 'zbp_' + idPart, state.paged + 1 );
-					btn.setAttribute( 'href', next.toString() );
-				}
+			if ( 'string' !== typeof html ) {
+				return;
 			}
 
-			if ( ! appendMode ) {
-				Array.prototype.forEach.call( root.querySelectorAll( '.zenblog__page' ), function ( a ) {
-					var n = parseInt( a.getAttribute( 'data-zenblog-page' ), 10 );
-					if ( n === state.paged ) {
-						a.setAttribute( 'aria-current', 'page' );
-					} else {
-						a.removeAttribute( 'aria-current' );
-					}
-				} );
+			if ( '' === html.trim() ) {
+				if ( nav ) {
+					nav.remove();
+				}
+				return;
+			}
+
+			var holder = document.createElement( 'div' );
+			holder.innerHTML = html;
+			var fresh = holder.querySelector( '.zenblog__nav' );
+
+			if ( ! fresh ) {
+				return;
+			}
+
+			if ( nav ) {
+				nav.replaceWith( fresh );
+			} else {
+				root.appendChild( fresh );
 			}
 		}
 
@@ -245,7 +260,7 @@
 						countEl.textContent = data.countLabel;
 					}
 
-					updateNav();
+					updateNav( data.nav );
 					syncResetVisibility();
 					syncAddressBar( data.paged, query );
 					announce( data.message );
@@ -283,20 +298,6 @@
 
 		syncResetVisibility();
 
-		/*
-		 * With results updating on change, a separate Apply button asks the visitor
-		 * to do something the widget has already done. It is hidden here rather
-		 * than omitted server-side, because without JavaScript it is the only way
-		 * to apply anything at all — so it has to exist in the HTML first and be
-		 * withdrawn once this script proves it can take over.
-		 */
-		var submit = root.querySelector( '.zenblog__filter-submit' );
-		var autoApply = ! submit || '0' !== submit.getAttribute( 'data-zenblog-auto' );
-
-		if ( submit && autoApply ) {
-			submit.hidden = true;
-		}
-
 		if ( form ) {
 			// Submitting still works with the keyboard and is the no-JS path; here
 			// it just becomes an in-place fetch.
@@ -308,7 +309,7 @@
 			// Radios, checkboxes and selects apply immediately — but focus is NOT
 			// moved, because the visitor is still working through the controls.
 			form.addEventListener( 'change', function ( e ) {
-				if ( ! autoApply || closest( e.target, '.zenblog__search-input' ) ) {
+				if ( closest( e.target, '.zenblog__search-input' ) ) {
 					return;
 				}
 				applyFilters( false );
@@ -316,7 +317,7 @@
 
 			var searchInput = form.querySelector( '.zenblog__search-input' );
 
-			if ( searchInput && autoApply ) {
+			if ( searchInput ) {
 				var timer = null;
 				searchInput.addEventListener( 'input', function () {
 					window.clearTimeout( timer );
@@ -326,7 +327,7 @@
 				} );
 			}
 
-			var reset = form.querySelector( '.zenblog__filter-reset' );
+			var reset = root.querySelector( '.zenblog__filter-reset' );
 
 			if ( reset ) {
 				reset.addEventListener( 'click', function ( e ) {

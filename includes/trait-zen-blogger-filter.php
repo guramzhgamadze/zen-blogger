@@ -283,13 +283,21 @@ trait Zen_Blogger_Filter_Trait {
 		);
 
 		$this->add_control(
-			'zenblog_filter_auto',
+			'zenblog_count_text',
 			array(
-				'label'       => esc_html__( 'Apply Automatically', 'zen-blogger' ),
-				'description' => esc_html__( 'Results update as soon as a filter changes, so the Apply button is hidden as redundant. It is still rendered for visitors without JavaScript. Switch this off to require an explicit Apply.', 'zen-blogger' ),
-				'type'        => Controls_Manager::SWITCHER,
-				'default'     => 'yes',
-				'condition'   => array( 'zenblog_filter' => 'yes' ),
+				'label'       => esc_html__( 'Result Count Text', 'zen-blogger' ),
+				/* translators: %s is a literal placeholder the user types, not a variable. */
+				'description' => esc_html__( 'Use %1$s where the number should go — for example "%2$s articles found".', 'zen-blogger' ),
+				'type'        => Controls_Manager::TEXT,
+				'label_block' => true,
+				'default'     => '',
+				/* translators: %s: number of matching posts. */
+				'placeholder' => esc_html__( '%s posts', 'zen-blogger' ),
+				'dynamic'     => array( 'active' => true ),
+				'condition'   => array(
+					'zenblog_filter'     => 'yes',
+					'zenblog_show_count' => 'yes',
+				),
 			)
 		);
 
@@ -297,9 +305,10 @@ trait Zen_Blogger_Filter_Trait {
 			'zenblog_filter_submit_text',
 			array(
 				'label'       => esc_html__( 'Apply Button Text', 'zen-blogger' ),
-				'description' => esc_html__( 'Used by the no-JavaScript fallback, and shown to everyone when Apply Automatically is off.', 'zen-blogger' ),
+				'description' => esc_html__( 'Only ever seen by visitors with JavaScript disabled — everyone else gets results as soon as a control changes.', 'zen-blogger' ),
 				'type'        => Controls_Manager::TEXT,
 				'default'     => esc_html__( 'Apply', 'zen-blogger' ),
+				'dynamic'     => array( 'active' => true ),
 				'condition'   => array( 'zenblog_filter' => 'yes' ),
 			)
 		);
@@ -574,6 +583,7 @@ trait Zen_Blogger_Filter_Trait {
 		$style      = isset( $settings['zenblog_filter_style'] ) ? $settings['zenblog_filter_style'] : 'links';
 		$has_search = 'yes' === ( isset( $settings['zenblog_search'] ) ? $settings['zenblog_search'] : '' );
 		$has_sort   = 'yes' === ( isset( $settings['zenblog_sort'] ) ? $settings['zenblog_sort'] : '' );
+		$show_clear = 'yes' === ( isset( $settings['zenblog_filter_clear'] ) ? $settings['zenblog_filter_clear'] : '' );
 
 		if ( ! $has_search && ! $has_sort && empty( $taxonomies ) ) {
 			return;
@@ -596,62 +606,92 @@ trait Zen_Blogger_Filter_Trait {
 		<form class="zenblog__filters" method="get" action="<?php echo esc_url( $action ); ?>"
 			aria-label="<?php echo esc_attr__( 'Search and filter posts', 'zen-blogger' ); ?>">
 
-			<div class="zenblog__filter-row">
-				<?php
-				if ( $has_search ) {
-					$this->render_search_field( $settings, $state, $uid );
-				}
+			<?php if ( $has_search ) : ?>
+				<?php // Search owns the top row outright, at any container width. ?>
+				<div class="zenblog__filter-row zenblog__filter-row--search">
+					<?php $this->render_search_field( $settings, $state, $uid ); ?>
+				</div>
+			<?php endif; ?>
 
-				foreach ( $taxonomies as $taxonomy ) {
-					$this->render_taxonomy_group( $settings, $state, $uid, $taxonomy, $style );
-				}
-
-				if ( $has_sort ) {
-					$this->render_sort_field( $settings, $state, $uid );
-				}
-				?>
-
-				<?php
-				/*
-				 * Rendered always, because without JavaScript it is the only way to
-				 * apply anything. When results update on change it is redundant, so
-				 * the script hides it on init — progressive enhancement, not a
-				 * server-side guess about whether JS will run.
-				 */
-				?>
-				<button type="submit" class="zenblog__filter-submit" data-zenblog-auto="<?php echo esc_attr( 'yes' === ( isset( $settings['zenblog_filter_auto'] ) ? $settings['zenblog_filter_auto'] : 'yes' ) ? '1' : '0' ); ?>">
-					<?php echo esc_html( $this->text_or( $settings, 'zenblog_filter_submit_text', __( 'Apply', 'zen-blogger' ) ) ); ?>
-				</button>
-
-				<?php if ( 'yes' === ( isset( $settings['zenblog_filter_clear'] ) ? $settings['zenblog_filter_clear'] : '' ) ) : ?>
+			<?php if ( $taxonomies || $has_sort || $show_clear ) : ?>
+				<div class="zenblog__filter-row zenblog__filter-row--controls">
 					<?php
-					/*
-					 * Always rendered, hidden while nothing is filtered. Rendering it
-					 * only when a filter is active would mean it never appears after an
-					 * AJAX update, because the form is not re-rendered.
-					 */
+					foreach ( $taxonomies as $taxonomy ) {
+						$this->render_taxonomy_group( $settings, $state, $uid, $taxonomy, $style );
+					}
+
+					if ( $has_sort ) {
+						$this->render_sort_field( $settings, $state, $uid );
+					}
 					?>
-					<a class="zenblog__filter-reset" href="<?php echo esc_url( $action ); ?>" <?php echo $this->filter_active( $state ) ? '' : 'hidden'; ?>>
-						<?php echo esc_html( $this->text_or( $settings, 'zenblog_filter_clear_text', __( 'Clear filters', 'zen-blogger' ) ) ); ?>
-					</a>
-				<?php endif; ?>
-			</div>
+
+					<?php if ( $show_clear ) : ?>
+						<?php
+						/*
+						 * Always rendered, hidden while nothing is filtered — rendering
+						 * it only when a filter is active would mean it never appeared
+						 * after an AJAX update, because the form is not re-rendered.
+						 */
+						?>
+						<button type="button" class="zenblog__filter-reset"
+							data-zenblog-reset="<?php echo esc_url( $action ); ?>"
+							<?php echo $this->filter_active( $state ) ? '' : 'hidden'; ?>>
+							<?php echo esc_html( $this->text_or( $settings, 'zenblog_filter_clear_text', __( 'Clear filters', 'zen-blogger' ) ) ); ?>
+						</button>
+					<?php endif; ?>
+				</div>
+			<?php endif; ?>
+
+			<?php
+			/*
+			 * The submit button exists only for visitors without JavaScript. When
+			 * scripting is on the parser treats <noscript> content as text, so this
+			 * button is never in the DOM at all — it is removed, not hidden.
+			 */
+			?>
+			<noscript>
+				<div class="zenblog__filter-row">
+					<button type="submit" class="zenblog__filter-submit">
+						<?php echo esc_html( $this->text_or( $settings, 'zenblog_filter_submit_text', __( 'Apply', 'zen-blogger' ) ) ); ?>
+					</button>
+				</div>
+			</noscript>
 
 			<?php if ( 'yes' === ( isset( $settings['zenblog_show_count'] ) ? $settings['zenblog_show_count'] : '' ) ) : ?>
 				<p class="zenblog__result-count" data-zenblog-count>
-					<?php
-					echo esc_html(
-						sprintf(
-							/* translators: %s: number of matching posts. */
-							_n( '%s post', '%s posts', $total, 'zen-blogger' ),
-							number_format_i18n( $total )
-						)
-					);
-					?>
+					<?php echo esc_html( $this->count_label( $settings, $total ) ); ?>
 				</p>
 			<?php endif; ?>
 		</form>
 		<?php
+	}
+
+	/**
+	 * The result-count string.
+	 *
+	 * @param array $settings Widget settings.
+	 * @param int   $total    Number of matching posts.
+	 * @return string
+	 */
+	public function count_label( array $settings, $total ) {
+		$total    = (int) $total;
+		$template = isset( $settings['zenblog_count_text'] ) ? trim( (string) $settings['zenblog_count_text'] ) : '';
+
+		if ( '' === $template ) {
+			return sprintf(
+				/* translators: %s: number of matching posts. */
+				_n( '%s post', '%s posts', $total, 'zen-blogger' ),
+				number_format_i18n( $total )
+			);
+		}
+
+		// One %s only. Anything else the user typed is left alone rather than
+		// handed to sprintf(), where a stray % would be a fatal.
+		if ( false === strpos( $template, '%s' ) ) {
+			return $template;
+		}
+
+		return str_replace( '%s', number_format_i18n( $total ), $template );
 	}
 
 	/**

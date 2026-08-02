@@ -421,6 +421,82 @@ class Zen_Blogger_Posts extends Widget_Base {
 			)
 		);
 
+		$this->add_control(
+			'zenblog_filter_container_heading',
+			array(
+				'label' => esc_html__( 'Container', 'zen-blogger' ),
+				'type'  => Controls_Manager::HEADING,
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			array(
+				'name'     => 'zenblog_filter_container_bg',
+				'types'    => array( 'classic', 'gradient' ),
+				'selector' => '{{WRAPPER}} .zenblog__filters',
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			array(
+				'name'     => 'zenblog_filter_container_border',
+				'selector' => '{{WRAPPER}} .zenblog__filters',
+			)
+		);
+
+		$this->add_responsive_control(
+			'zenblog_filter_container_radius',
+			array(
+				'label'      => esc_html__( 'Border Radius', 'zen-blogger' ),
+				'type'       => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', '%', 'em', 'rem' ),
+				'selectors'  => array(
+					'{{WRAPPER}} .zenblog__filters' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'zenblog_filter_container_padding',
+			array(
+				'label'      => esc_html__( 'Padding', 'zen-blogger' ),
+				'type'       => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', 'em', 'rem' ),
+				'selectors'  => array(
+					'{{WRAPPER}} .zenblog__filters' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'zenblog_filter_row_gap',
+			array(
+				'label'      => esc_html__( 'Space Between Rows', 'zen-blogger' ),
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px', 'em', 'rem' ),
+				'range'      => array(
+					'px' => array(
+						'min' => 0,
+						'max' => 60,
+					),
+				),
+				'selectors'  => array(
+					'{{WRAPPER}} .zenblog__filters' => '--zenblog-filter-row-gap: {{SIZE}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'zenblog_filter_controls_heading',
+			array(
+				'label'     => esc_html__( 'Controls', 'zen-blogger' ),
+				'type'      => Controls_Manager::HEADING,
+				'separator' => 'before',
+			)
+		);
+
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
@@ -970,19 +1046,48 @@ class Zen_Blogger_Posts extends Widget_Base {
 			return;
 		}
 
-		// Numbered pages, windowed around the current one.
+		/*
+		 * Numbered pages, windowed around the current one — but the first and last
+		 * page are always reachable. Without them a long archive is a trap: the
+		 * window only ever moves two steps at a time, so page 29 of 29 cannot be
+		 * reached at all from page 1.
+		 */
 		$window = 2;
 		$from   = max( 1, $paged - $window );
 		$to     = min( $maxpage, $paged + $window );
 
-		for ( $n = $from; $n <= $to; $n++ ) {
+		$link = function ( $n ) use ( $page_url, $paged ) {
 			printf(
 				'<a class="zenblog__page" href="%1$s" data-zenblog-page="%2$d"%3$s>%4$s</a>',
 				esc_url( $page_url( $n ) ),
 				(int) $n,
-				( $n === $paged ) ? ' aria-current="page"' : '',
+				( (int) $n === (int) $paged ) ? ' aria-current="page"' : '',
 				esc_html( number_format_i18n( $n ) )
 			);
+		};
+
+		$gap = function () {
+			// Presentational: a screen reader should hear the page numbers, not an
+			// ellipsis between them.
+			echo '<span class="zenblog__page-gap" aria-hidden="true">&hellip;</span>';
+		};
+
+		if ( $from > 1 ) {
+			$link( 1 );
+			if ( $from > 2 ) {
+				$gap();
+			}
+		}
+
+		for ( $n = $from; $n <= $to; $n++ ) {
+			$link( $n );
+		}
+
+		if ( $to < $maxpage ) {
+			if ( $to < $maxpage - 1 ) {
+				$gap();
+			}
+			$link( $maxpage );
 		}
 
 		echo '</nav>';
@@ -1014,6 +1119,14 @@ class Zen_Blogger_Posts extends Widget_Base {
 		}
 
 		$html = ob_get_clean();
+
+		// The paginator itself has to come back too: its window moves with the
+		// current page, so leaving the old markup in place strands the visitor on
+		// whatever range was rendered first.
+		ob_start();
+		$this->render_nav( $settings, $paged, (int) $query->max_num_pages, 'zenblog-' . $this->get_id(), $state );
+		$nav = ob_get_clean();
+
 		wp_reset_postdata();
 
 		$total    = (int) $query->found_posts;
@@ -1022,17 +1135,14 @@ class Zen_Blogger_Posts extends Widget_Base {
 
 		return array(
 			'html'       => $html,
+			'nav'        => $nav,
 			'paged'      => (int) $paged,
 			'maxPages'   => $maxpages,
 			'total'      => $total,
 			'count'      => (int) $query->post_count,
 			/* translators: 1: number of posts shown so far, 2: total number of posts. */
 			'message'    => sprintf( __( 'Showing %1$s of %2$s posts', 'zen-blogger' ), number_format_i18n( $shown ), number_format_i18n( $total ) ),
-			'countLabel' => sprintf(
-				/* translators: %s: number of matching posts. */
-				_n( '%s post', '%s posts', $total, 'zen-blogger' ),
-				number_format_i18n( $total )
-			),
+			'countLabel' => $this->count_label( $settings, $total ),
 		);
 	}
 
