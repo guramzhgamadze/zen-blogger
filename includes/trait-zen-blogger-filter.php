@@ -586,7 +586,22 @@ trait Zen_Blogger_Filter_Trait {
 		}
 
 		$taxonomies = $this->filter_taxonomies( $settings );
-		$style      = isset( $settings['zenblog_filter_style'] ) ? $settings['zenblog_filter_style'] : 'links';
+
+		/*
+		 * A taxonomy with one term left offers no choice — every post already has
+		 * it, which is exactly what a category archive looks like from the
+		 * inside. Dropping it leaves search and sort, which still do something.
+		 */
+		$taxonomies = array_values(
+			array_filter(
+				$taxonomies,
+				function ( $taxonomy ) use ( $settings ) {
+					return count( $this->scoped_terms( $settings, $taxonomy ) ) > 1;
+				}
+			)
+		);
+
+		$style = isset( $settings['zenblog_filter_style'] ) ? $settings['zenblog_filter_style'] : 'links';
 		$has_search = 'yes' === ( isset( $settings['zenblog_search'] ) ? $settings['zenblog_search'] : '' );
 		$has_sort   = 'yes' === ( isset( $settings['zenblog_sort'] ) ? $settings['zenblog_sort'] : '' );
 		$show_clear = 'yes' === ( isset( $settings['zenblog_filter_clear'] ) ? $settings['zenblog_filter_clear'] : '' );
@@ -838,6 +853,30 @@ trait Zen_Blogger_Filter_Trait {
 	 * @return WP_Term[]
 	 */
 	private function scoped_terms( array $settings, $taxonomy ) {
+		if ( isset( $this->zenblog_term_cache[ $taxonomy ] ) ) {
+			return $this->zenblog_term_cache[ $taxonomy ];
+		}
+
+		$this->zenblog_term_cache[ $taxonomy ] = $this->build_scoped_terms( $settings, $taxonomy );
+
+		return $this->zenblog_term_cache[ $taxonomy ];
+	}
+
+	/**
+	 * Per-taxonomy term cache for one render.
+	 *
+	 * @var array<string,WP_Term[]>
+	 */
+	private $zenblog_term_cache = array();
+
+	/**
+	 * Work out the scoped terms for one taxonomy.
+	 *
+	 * @param array  $settings Widget settings.
+	 * @param string $taxonomy Taxonomy name.
+	 * @return WP_Term[]
+	 */
+	private function build_scoped_terms( array $settings, $taxonomy ) {
 		$limit      = isset( $settings['zenblog_filter_limit'] ) ? max( 1, (int) $settings['zenblog_filter_limit'] ) : 12;
 		$show_empty = 'yes' === ( isset( $settings['zenblog_filter_empty_terms'] ) ? $settings['zenblog_filter_empty_terms'] : '' );
 		$ids        = $this->filter_scope_ids( $settings );

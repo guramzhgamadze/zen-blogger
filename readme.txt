@@ -4,7 +4,7 @@ Tags: elementor, carousel, blog, slider, posts
 Requires at least: 6.5
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.6.0
+Stable tag: 1.7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -116,6 +116,11 @@ Yes. The layout uses logical properties throughout and the carousel direction fo
 6. Style controls for the card, image and read-more button.
 
 == Changelog ==
+
+= 1.7.0 =
+* Fixed: the filter bar did nothing at all whenever AJAX was off — with pagination set to None, with the Update Without Reloading switch off, or on the Current Query source. Its Apply button only exists for visitors without JavaScript, so with scripting on there was no way to submit it. Changing a control now reloads the page with the chosen filters, the same round trip the no-JavaScript path makes.
+* New: Current Query works with Load More and infinite scroll on archives. The widget now tells the endpoint which listing it is on — this term, this author, this search — and the endpoint checks that identity against real objects before rebuilding it, so a caller still cannot define a query of its own.
+* Changed: a taxonomy left offering a single term is dropped from the filter bar. On a category archive every post already has that category, so the control was a button that could not change anything; search and sort remain.
 
 = 1.6.0 =
 * Fixed: the filter bar listed every term on the site with its site-wide count, whatever the widget was actually showing. On an author or category archive that meant offering terms with nothing in the archive at all, and counts that did not match the results underneath. It now lists only the terms present in the widget's own posts, counted against them.

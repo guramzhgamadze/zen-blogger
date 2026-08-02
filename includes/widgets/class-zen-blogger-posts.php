@@ -369,7 +369,7 @@ class Zen_Blogger_Posts extends Widget_Base {
 			'zenblog_nav_current_note',
 			array(
 				'type'            => Controls_Manager::RAW_HTML,
-				'raw'             => esc_html__( 'With the "Current page query" source, pagination stays as real page links. The archive query only exists on the page itself, so it cannot be rebuilt for a background request — fetching in place would quietly return the wrong posts.', 'zen-blogger' ),
+				'raw'             => esc_html__( 'With the Current Query source the widget pages through the archive itself, so its links move the whole page. On a listing this plugin cannot describe to a background request, it falls back to plain page links rather than risk fetching the wrong posts.', 'zen-blogger' ),
 				'content_classes' => 'elementor-descriptor',
 				'condition'       => array(
 					'zenblog_source' => 'current',
@@ -1034,6 +1034,19 @@ class Zen_Blogger_Posts extends Widget_Base {
 						'postId'    => $this->document_id(),
 						'contextId' => is_singular() ? (int) get_queried_object_id() : 0,
 						'pageUrl'   => $this->page_url(),
+
+						/*
+						 * Only sent for Current Query, and only as an identity the
+						 * endpoint re-validates against real objects — never as
+						 * query arguments.
+						 */
+						'context'   => ( 'current' === ( isset( $settings['zenblog_source'] ) ? $settings['zenblog_source'] : '' ) )
+							? $this->query_context()
+							: null,
+
+						// Current Query pages via the archive's own paged var, so
+						// the widget must not also write its private one.
+						'mainPaging' => 'current' === ( isset( $settings['zenblog_source'] ) ? $settings['zenblog_source'] : '' ),
 						'elementId' => $this->get_id(),
 						'nav'       => $nav,
 						'ajax'      => $this->ajax_enabled( $settings ),
@@ -1230,8 +1243,22 @@ class Zen_Blogger_Posts extends Widget_Base {
 		 * you end up with a paginator that renumbers but never moves.
 		 */
 		if ( 'current' === ( isset( $settings['zenblog_source'] ) ? $settings['zenblog_source'] : '' ) ) {
-			$page_url = function ( $n ) {
-				return get_pagenum_link( max( 1, (int) $n ) );
+			$archive_base = $this->nav_base_url;
+
+			$page_url = function ( $n ) use ( $archive_base ) {
+				$n = max( 1, (int) $n );
+
+				/*
+				 * Inside the REST callback there is no request to read a pretty
+				 * /page/N/ URL from, so the paged query var is used instead —
+				 * WordPress honours it on any archive, and these hrefs are only
+				 * the fallback for a middle-click anyway.
+				 */
+				if ( $archive_base ) {
+					return 1 === $n ? $archive_base : add_query_arg( 'paged', $n, $archive_base );
+				}
+
+				return get_pagenum_link( $n );
 			};
 		} else {
 			$page_url = function ( $n ) use ( $base, $uid ) {
@@ -1577,13 +1604,14 @@ class Zen_Blogger_Posts extends Widget_Base {
 		$nav = isset( $settings['zenblog_nav'] ) ? $settings['zenblog_nav'] : '';
 
 		/*
-		 * "Current page query" inherits the main query's vars, and the main query
-		 * for an archive simply does not exist inside a REST request — it would
-		 * silently inherit an empty one and return site-wide latest posts instead
-		 * of the archive. Real page links reload the archive properly, so that is
-		 * what this source gets.
+		 * Current Query has no main query to inherit inside a REST request. It
+		 * gets AJAX only where this page can be described well enough for the
+		 * endpoint to rebuild it — otherwise fetching would quietly return
+		 * site-wide posts instead of the archive, and real page links are the
+		 * honest fallback.
 		 */
-		if ( 'current' === ( isset( $settings['zenblog_source'] ) ? $settings['zenblog_source'] : '' ) ) {
+		if ( 'current' === ( isset( $settings['zenblog_source'] ) ? $settings['zenblog_source'] : '' )
+			&& ! $this->query_context() ) {
 			return false;
 		}
 
@@ -1593,6 +1621,69 @@ class Zen_Blogger_Posts extends Widget_Base {
 
 		return in_array( $nav, array( 'numbers', 'prev_next' ), true )
 			&& 'yes' === ( isset( $settings['zenblog_nav_ajax'] ) ? $settings['zenblog_nav_ajax'] : '' );
+	}
+
+	/**
+	 * Describe the archive this page is, in terms a background request can rebuild.
+	 *
+	 * The main query does not exist inside a REST request, so a widget set to
+	 * Current Query had no way to fetch anything and lost its filter bar and its
+	 * Load More with it. Sending query VARS would be letting the caller define
+	 * the query; sending an identity — this term, this author, this search — can
+	 * be checked against real objects on the way back in.
+	 *
+	 * @return array Empty when this is not a listing the endpoint can reproduce.
+	 */
+	private function query_context() {
+		if ( is_category() || is_tag() || is_tax() ) {
+			$term = get_queried_object();
+
+			if ( $term instanceof WP_Term ) {
+				return array(
+					'type' => 'term',
+					'tax'  => $term->taxonomy,
+					'id'   => (int) $term->term_id,
+				);
+			}
+		}
+
+		if ( is_author() ) {
+			return array(
+				'type' => 'author',
+				'id'   => (int) get_queried_object_id(),
+			);
+		}
+
+		if ( is_search() ) {
+			return array(
+				'type' => 'search',
+				's'    => (string) get_search_query(),
+			);
+		}
+
+		if ( is_post_type_archive() ) {
+			$type = get_query_var( 'post_type' );
+
+			return array(
+				'type' => 'post_type',
+				'pt'   => (string) ( is_array( $type ) ? reset( $type ) : $type ),
+			);
+		}
+
+		if ( is_date() ) {
+			return array(
+				'type' => 'date',
+				'y'    => (int) get_query_var( 'year' ),
+				'm'    => (int) get_query_var( 'monthnum' ),
+				'd'    => (int) get_query_var( 'day' ),
+			);
+		}
+
+		if ( is_home() ) {
+			return array( 'type' => 'home' );
+		}
+
+		return array();
 	}
 
 	/**

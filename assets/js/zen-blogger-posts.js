@@ -39,6 +39,66 @@
 		return el && el.closest ? el.closest( selector ) : null;
 	}
 
+	/**
+	 * Make the filter bar work by plain form submission.
+	 *
+	 * Used when there is no AJAX to fetch with. Every control still carries the
+	 * right name and value, so submitting reloads the page with the chosen state
+	 * in the query string — the same round trip a visitor without JavaScript
+	 * makes, just without having to find a button that is not there.
+	 *
+	 * @param {Element} root Widget root.
+	 * @return {void}
+	 */
+	function bindPlainForm( root ) {
+		var form = root.querySelector( '.zenblog__filters' );
+
+		if ( ! form ) {
+			return;
+		}
+
+		function submit() {
+			if ( form.requestSubmit ) {
+				form.requestSubmit();
+			} else {
+				form.submit();
+			}
+		}
+
+		form.addEventListener( 'change', function ( e ) {
+			// Typing is not a decision; the search box submits on Enter instead.
+			if ( closest( e.target, '.zenblog__search-input' ) ) {
+				return;
+			}
+
+			submit();
+		} );
+
+		var search = form.querySelector( '.zenblog__search-input' );
+
+		if ( search ) {
+			// With more than one field in the form, browsers do not treat Enter
+			// as implicit submission, and there is no submit button to fall back
+			// on — so the search box would otherwise swallow the Enter key.
+			search.addEventListener( 'keydown', function ( e ) {
+				if ( 'Enter' === e.key ) {
+					e.preventDefault();
+					submit();
+				}
+			} );
+		}
+
+		var reset = root.querySelector( '.zenblog__filter-reset' );
+
+		if ( reset ) {
+			reset.addEventListener( 'click', function ( e ) {
+				e.preventDefault();
+				// The action is this page with every filter argument stripped.
+				window.location.href = form.getAttribute( 'action' ) || window.location.pathname;
+			} );
+		}
+	}
+
 	function initPosts( root ) {
 		if ( ! root || root.dataset.zenbloggerPostsInit === '1' ) {
 			return;
@@ -46,9 +106,20 @@
 
 		var cfg = parseConfig( root );
 
-		// No AJAX configured, or no fetch available: the server-rendered links
-		// already work on their own, so leave them alone.
-		if ( ! cfg || ! cfg.ajax || ! window.fetch ) {
+		if ( ! cfg ) {
+			return;
+		}
+
+		/*
+		 * No AJAX: the paging links work by themselves, but the filter bar does
+		 * not. Its Apply button only exists inside <noscript>, which is not in
+		 * the DOM at all once scripting is on — so without this the controls
+		 * change nothing and the bar looks broken. Submitting the form is a real
+		 * navigation, which is exactly what the no-JS path already does.
+		 */
+		if ( ! cfg.ajax || ! window.fetch ) {
+			root.dataset.zenbloggerPostsInit = '1';
+			bindPlainForm( root );
 			return;
 		}
 
@@ -144,6 +215,12 @@
 				url.searchParams.set( 'page_url', cfg.pageUrl );
 			}
 
+			// Current Query only: which archive this is, so the endpoint can
+			// rebuild a listing that does not exist in a REST request.
+			if ( cfg.context ) {
+				url.searchParams.set( 'context', JSON.stringify( cfg.context ) );
+			}
+
 			return url.toString();
 		}
 
@@ -170,7 +247,12 @@
 			 * a page number in the address bar. Filters always go in: those are
 			 * genuinely linkable, restorable state.
 			 */
-			if ( ! appendMode && paged > 1 ) {
+			/*
+			 * Current Query pages through the archive's own `paged`, so writing
+			 * this widget's private argument would put a number in the URL that
+			 * nothing reads — and a reload would land back on page one.
+			 */
+			if ( ! appendMode && ! cfg.mainPaging && paged > 1 ) {
 				url.searchParams.set( 'zbp_' + idPart, paged );
 			}
 

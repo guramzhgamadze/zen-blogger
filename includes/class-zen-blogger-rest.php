@@ -91,6 +91,12 @@ final class Zen_Blogger_Rest {
 						'description'       => 'Post the widget is being displayed for, when that is not the post it is stored in.',
 						'sanitize_callback' => 'absint',
 					),
+					'context'    => array(
+						'type'              => 'string',
+						'default'           => '',
+						'description'       => 'Identity of the archive being displayed, re-validated against real objects before use.',
+						'sanitize_callback' => 'sanitize_text_field',
+					),
 					'page_url'   => array(
 						'type'              => 'string',
 						'default'           => '',
@@ -205,11 +211,143 @@ final class Zen_Blogger_Rest {
 		 */
 		$restore = self::enter_context( (int) $request->get_param( 'context_id' ) );
 
+		// Current Query needs the listing itself put back, not just a post.
+		$restore_query = self::enter_query_context( (string) $request->get_param( 'context' ) );
+
 		$response = $widget->render_ajax_page( $paged, $state, $page_url );
 
+		$restore_query();
 		$restore();
 
 		return rest_ensure_response( $response );
+	}
+
+	/**
+	 * Rebuild the archive the widget is displayed on, returning the undo.
+	 *
+	 * The descriptor names a thing — this term, this author, this search — and
+	 * every branch below checks it against a real object before building
+	 * anything. A caller cannot hand over query arguments; the worst it can do is
+	 * name a different archive it could already have visited.
+	 *
+	 * @param string $descriptor JSON identity sent by the widget.
+	 * @return callable Restores the previous globals.
+	 */
+	private static function enter_query_context( $descriptor ) {
+		global $wp_query, $wp_the_query;
+
+		$previous     = $wp_query;
+		$previous_the = $wp_the_query;
+
+		$restore = static function () use ( $previous, $previous_the ) {
+			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Restoring what this function replaced.
+			$GLOBALS['wp_query'] = $previous;
+			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Restoring what this function replaced.
+			$GLOBALS['wp_the_query'] = $previous_the;
+		};
+
+		if ( '' === $descriptor ) {
+			return $restore;
+		}
+
+		$context = json_decode( $descriptor, true );
+
+		if ( ! is_array( $context ) || empty( $context['type'] ) ) {
+			return $restore;
+		}
+
+		$vars = null;
+
+		switch ( $context['type'] ) {
+			case 'term':
+				$term = get_term( isset( $context['id'] ) ? (int) $context['id'] : 0 );
+
+				// The taxonomy has to match the one the widget said it was, and be
+				// one with public archives at all.
+				if ( $term instanceof WP_Term
+					&& isset( $context['tax'] )
+					&& $term->taxonomy === $context['tax']
+					&& is_taxonomy_viewable( $term->taxonomy ) ) {
+					$vars = array(
+						'tax_query' => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- Reproducing the page's own archive.
+							array(
+								'taxonomy' => $term->taxonomy,
+								'field'    => 'term_id',
+								'terms'    => array( (int) $term->term_id ),
+							),
+						),
+					);
+				}
+				break;
+
+			case 'author':
+				$author = isset( $context['id'] ) ? (int) $context['id'] : 0;
+
+				if ( $author && get_user_by( 'id', $author ) ) {
+					$vars = array( 'author' => $author );
+				}
+				break;
+
+			case 'search':
+				$search = sanitize_text_field( isset( $context['s'] ) ? (string) $context['s'] : '' );
+
+				if ( '' !== $search ) {
+					$vars = array( 's' => $search );
+				}
+				break;
+
+			case 'post_type':
+				$type = sanitize_key( isset( $context['pt'] ) ? (string) $context['pt'] : '' );
+
+				if ( $type && is_post_type_viewable( $type ) ) {
+					$vars = array( 'post_type' => $type );
+				}
+				break;
+
+			case 'date':
+				$vars = array_filter(
+					array(
+						'year'     => isset( $context['y'] ) ? (int) $context['y'] : 0,
+						'monthnum' => isset( $context['m'] ) ? (int) $context['m'] : 0,
+						'day'      => isset( $context['d'] ) ? (int) $context['d'] : 0,
+					)
+				);
+
+				if ( empty( $vars ) ) {
+					$vars = null;
+				}
+				break;
+
+			case 'home':
+				$vars = array();
+				break;
+		}
+
+		if ( null === $vars ) {
+			return $restore;
+		}
+
+		/*
+		 * Deliberately cheap: only the parsed query_vars are needed, and the
+		 * widget throws away posts_per_page and fields when it inherits them.
+		 */
+		$context_query = new WP_Query(
+			array_merge(
+				$vars,
+				array(
+					'posts_per_page' => 1,
+					'fields'         => 'ids',
+					'no_found_rows'  => true,
+				)
+			)
+		);
+
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Deliberate, undone by the returned callable.
+		$GLOBALS['wp_query'] = $context_query;
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Deliberate, undone by the returned callable.
+		$GLOBALS['wp_the_query'] = $context_query;
+
+		return $restore;
 	}
 
 	/**
