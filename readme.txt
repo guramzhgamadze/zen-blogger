@@ -4,7 +4,7 @@ Tags: elementor, carousel, blog, slider, posts
 Requires at least: 6.5
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.7.0
+Stable tag: 1.7.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -116,6 +116,9 @@ Yes. The layout uses logical properties throughout and the carousel direction fo
 6. Style controls for the card, image and read-more button.
 
 == Changelog ==
+
+= 1.7.1 =
+* Fixed: the filter bar's two spacing sliders shipped with no default, so the panel showed them at zero and saved zero the moment either was touched — leaving the search box and the controls beneath it in contact. Both now carry a real default. An existing widget already saved at zero keeps it; set Space Between Rows to restore the gap.
 
 = 1.7.0 =
 * Fixed: the filter bar did nothing at all whenever AJAX was off — with pagination set to None, with the Update Without Reloading switch off, or on the Current Query source. Its Apply button only exists for visitors without JavaScript, so with scripting on there was no way to submit it. Changing a control now reloads the page with the chosen filters, the same round trip the no-JavaScript path makes.

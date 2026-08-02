@@ -522,6 +522,18 @@ class Zen_Blogger_Posts extends Widget_Base {
 						'max' => 60,
 					),
 				),
+
+				/*
+				 * A slider with no default sits at the bottom of its range, so the
+				 * first touch of the panel saves 0 — and 0 here puts the search box
+				 * and the controls under it in contact with no gap at all. Spacing
+				 * gets a real default for exactly this reason; only colours are
+				 * left empty.
+				 */
+				'default'    => array(
+					'unit' => 'px',
+					'size' => 16,
+				),
 				'selectors'  => array(
 					'{{WRAPPER}} .zenblog__filters' => '--zenblog-filter-row-gap: {{SIZE}}{{UNIT}};',
 				),
@@ -638,6 +650,12 @@ class Zen_Blogger_Posts extends Widget_Base {
 						'min' => 0,
 						'max' => 48,
 					),
+				),
+				// Same reason as Space Between Rows above: a spacing slider without
+				// a default saves 0 the moment anyone touches the panel.
+				'default'    => array(
+					'unit' => 'px',
+					'size' => 12,
 				),
 				'selectors'  => array(
 					'{{WRAPPER}} .zenblog__filter-row' => 'gap: {{SIZE}}{{UNIT}};',
