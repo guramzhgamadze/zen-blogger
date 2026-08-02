@@ -4,7 +4,7 @@ Tags: elementor, carousel, blog, slider, posts
 Requires at least: 6.5
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.5.2
+Stable tag: 1.6.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -74,6 +74,7 @@ Neither plugin requires the other.
 * `zenblog_schema_graph` — alter the JSON-LD graph, or return an empty array to suppress it.
 * `zenblog_zengeo_integration` — disable the Zen GEO linkage.
 * `zenblog_reading_speed` — words per minute for the reading-time estimate (default 200).
+* `zenblog_filter_scope_limit` — how many posts the filter bar inspects to decide which terms to offer (default 1000).
 * `zenblog_term_choices_limit` / `zenblog_post_choices_limit` — how many terms and posts the panel offers.
 
 == Installation ==
@@ -115,6 +116,10 @@ Yes. The layout uses logical properties throughout and the carousel direction fo
 6. Style controls for the card, image and read-more button.
 
 == Changelog ==
+
+= 1.6.0 =
+* Fixed: the filter bar listed every term on the site with its site-wide count, whatever the widget was actually showing. On an author or category archive that meant offering terms with nothing in the archive at all, and counts that did not match the results underneath. It now lists only the terms present in the widget's own posts, counted against them.
+* New: `zenblog_filter_scope_limit` filter, for how many posts the bar may inspect when working out which terms are present (default 1000).
 
 = 1.5.2 =
 * Fixed: with the Current Query source, the widget stayed on page one while the rest of the archive moved. It read its own page number instead of the archive's, so /page/2/ showed page one's posts. It now follows the page the visitor is on, and its paging links drive the archive rather than a private query argument.

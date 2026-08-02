@@ -769,6 +769,151 @@ trait Zen_Blogger_Filter_Trait {
 	}
 
 	/**
+	 * Post IDs the widget's own source returns, ignoring the filter selection.
+	 *
+	 * Deliberately ignores the active filters and the search term. Narrowing the
+	 * scope by the current selection would delete the other options as soon as
+	 * one was picked, leaving no way back; and because an AJAX update re-renders
+	 * the results but not the bar, a scope that moved with the search would go
+	 * stale the moment anyone typed.
+	 *
+	 * @param array $settings Widget settings.
+	 * @return int[]
+	 */
+	private function filter_scope_ids( array $settings ) {
+		if ( null !== $this->zenblog_scope_ids ) {
+			return $this->zenblog_scope_ids;
+		}
+
+		/**
+		 * How many posts the filter bar may inspect to work out which terms are
+		 * actually present. Past this it stops counting rather than dragging a
+		 * whole archive into memory on every page load.
+		 *
+		 * @since 1.6.0
+		 *
+		 * @param int   $limit    Maximum posts inspected.
+		 * @param array $settings Widget settings.
+		 */
+		$cap = (int) apply_filters( 'zenblog_filter_scope_limit', 1000, $settings );
+
+		$collect = function ( $args ) use ( $cap ) {
+			$args['posts_per_page'] = max( 1, $cap );
+			$args['fields']         = 'ids';
+			$args['no_found_rows']  = true;
+			unset( $args['paged'], $args['offset'] );
+
+			return $args;
+		};
+
+		// Priority 99 so it lands after apply_paging(), which would otherwise put
+		// the page number and the active term filter back.
+		add_filter( 'zenblog_query_args', $collect, 99 );
+		$query = Zen_Blogger_Query::run( $settings, $this->get_id() );
+		remove_filter( 'zenblog_query_args', $collect, 99 );
+
+		$this->zenblog_scope_ids = array_map( 'intval', (array) $query->posts );
+
+		return $this->zenblog_scope_ids;
+	}
+
+	/**
+	 * Scope cache for one render.
+	 *
+	 * @var int[]|null
+	 */
+	private $zenblog_scope_ids = null;
+
+	/**
+	 * The terms actually present in what this widget is showing.
+	 *
+	 * A bare get_terms() answers "what terms exist on this site", which is the
+	 * wrong question: on an author or category archive it listed every term on
+	 * the site, each with its site-wide count, including terms with nothing in
+	 * the archive at all. Counting against the widget's own result set is what
+	 * makes the bar describe the posts underneath it.
+	 *
+	 * @param array  $settings Widget settings.
+	 * @param string $taxonomy Taxonomy name.
+	 * @return WP_Term[]
+	 */
+	private function scoped_terms( array $settings, $taxonomy ) {
+		$limit      = isset( $settings['zenblog_filter_limit'] ) ? max( 1, (int) $settings['zenblog_filter_limit'] ) : 12;
+		$show_empty = 'yes' === ( isset( $settings['zenblog_filter_empty_terms'] ) ? $settings['zenblog_filter_empty_terms'] : '' );
+		$ids        = $this->filter_scope_ids( $settings );
+
+		$tally = array();
+		$found = array();
+
+		if ( ! empty( $ids ) ) {
+			$objects = wp_get_object_terms( $ids, $taxonomy, array( 'fields' => 'all_with_object_id' ) );
+
+			if ( is_wp_error( $objects ) ) {
+				return array();
+			}
+
+			// One row per post/term pairing, so this counts posts, not terms.
+			foreach ( $objects as $object ) {
+				$id = (int) $object->term_id;
+
+				$tally[ $id ] = isset( $tally[ $id ] ) ? $tally[ $id ] + 1 : 1;
+
+				if ( ! isset( $found[ $id ] ) ) {
+					$found[ $id ] = $object;
+				}
+			}
+		}
+
+		if ( $show_empty ) {
+			$all = get_terms(
+				array(
+					'taxonomy'   => $taxonomy,
+					'hide_empty' => false,
+					'number'     => $limit * 3,
+					'orderby'    => 'count',
+					'order'      => 'DESC',
+				)
+			);
+
+			if ( ! is_wp_error( $all ) ) {
+				foreach ( $all as $term ) {
+					if ( ! isset( $found[ (int) $term->term_id ] ) ) {
+						$found[ (int) $term->term_id ] = $term;
+						$tally[ (int) $term->term_id ] = 0;
+					}
+				}
+			}
+		}
+
+		if ( empty( $found ) ) {
+			return array();
+		}
+
+		$terms = array();
+
+		foreach ( $found as $id => $term ) {
+			// Cloned: these objects are shared through the term cache, and writing
+			// a scoped count onto them would hand it to everything else that asks.
+			$copy        = clone $term;
+			$copy->count = (int) $tally[ $id ];
+			$terms[]     = $copy;
+		}
+
+		usort(
+			$terms,
+			function ( $a, $b ) {
+				if ( $a->count === $b->count ) {
+					return strnatcasecmp( $a->name, $b->name );
+				}
+
+				return $b->count - $a->count;
+			}
+		);
+
+		return array_slice( $terms, 0, $limit );
+	}
+
+	/**
 	 * One taxonomy's controls.
 	 *
 	 * @param array  $settings Widget settings.
@@ -782,17 +927,9 @@ trait Zen_Blogger_Filter_Trait {
 		$object = get_taxonomy( $taxonomy );
 		$label  = $object ? $object->label : $taxonomy;
 
-		$terms = get_terms(
-			array(
-				'taxonomy'   => $taxonomy,
-				'hide_empty' => 'yes' !== ( isset( $settings['zenblog_filter_empty_terms'] ) ? $settings['zenblog_filter_empty_terms'] : '' ),
-				'number'     => isset( $settings['zenblog_filter_limit'] ) ? max( 1, (int) $settings['zenblog_filter_limit'] ) : 12,
-				'orderby'    => 'count',
-				'order'      => 'DESC',
-			)
-		);
+		$terms = $this->scoped_terms( $settings, $taxonomy );
 
-		if ( is_wp_error( $terms ) || empty( $terms ) ) {
+		if ( empty( $terms ) ) {
 			return;
 		}
 
