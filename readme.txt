@@ -4,7 +4,7 @@ Tags: elementor, carousel, blog, slider, posts
 Requires at least: 6.5
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.5.0
+Stable tag: 1.5.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -29,7 +29,7 @@ What sets it apart is what happens *after* an AJAX update, which is where most p
 * The new result count is announced politely — "Showing 6 of 8 posts" — instead of the page silently changing.
 * The grid is marked `aria-busy` while it loads.
 * Focus moves to the first newly loaded post, so keyboard users carry on from the new content rather than being dropped at the top of the page. On an auto-triggered infinite load focus is deliberately *not* taken, because nobody asked for it.
-* Infinite scroll auto-loads at most twice in a row before the button must be pressed again. An endless feed makes everything below it unreachable; capping the run keeps the footer in reach.
+* Infinite scroll auto-loads a set number of pages before the button must be pressed again. An endless feed makes everything below it unreachable; capping the run keeps the footer in reach.
 * The address bar keeps up with filters, so Back works and a filtered view can be shared.
 
 The optional filter bar is built from real term-archive links and reflects the current selection with `aria-current`.
@@ -115,6 +115,10 @@ Yes. The layout uses logical properties throughout and the carousel direction fo
 6. Style controls for the card, image and read-more button.
 
 == Changelog ==
+
+= 1.5.1 =
+* New: drop shadow controls for the filter bar — one for the bar itself, one for the controls inside it.
+* New: drop shadow control for the paginator, which had every other style control but this one.
 
 = 1.5.0 =
 * Fixed: pagination did nothing at all when the widget was placed in a Theme Builder template. The widget reported the post being viewed, but its settings live in the template, so every background request looked for the widget in the wrong post and was refused. It now reports the document it was placed in, and passes the displayed post separately.

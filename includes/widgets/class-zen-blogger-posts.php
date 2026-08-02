@@ -10,6 +10,7 @@ defined( 'ABSPATH' ) || exit;
 use Elementor\Controls_Manager;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Border;
+use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Widget_Base;
 
@@ -489,6 +490,14 @@ class Zen_Blogger_Posts extends Widget_Base {
 			)
 		);
 
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			array(
+				'name'     => 'zenblog_filter_container_shadow',
+				'selector' => '{{WRAPPER}} .zenblog__filters',
+			)
+		);
+
 		$this->add_responsive_control(
 			'zenblog_filter_container_padding',
 			array(
@@ -607,6 +616,14 @@ class Zen_Blogger_Posts extends Widget_Base {
 				'selectors'  => array(
 					'{{WRAPPER}} .zenblog__check label, {{WRAPPER}} .zenblog__select, {{WRAPPER}} .zenblog__search-input, {{WRAPPER}} .zenblog__filter-submit, {{WRAPPER}} .zenblog__filter-reset' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			array(
+				'name'     => 'zenblog_filter_shadow',
+				'selector' => '{{WRAPPER}} .zenblog__check label, {{WRAPPER}} .zenblog__select, {{WRAPPER}} .zenblog__search-input, {{WRAPPER}} .zenblog__filter-submit, {{WRAPPER}} .zenblog__filter-reset',
 			)
 		);
 
@@ -855,6 +872,14 @@ class Zen_Blogger_Posts extends Widget_Base {
 				'selectors'  => array(
 					'{{WRAPPER}} .zenblog__page, {{WRAPPER}} .zenblog__more-btn' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			array(
+				'name'     => 'zenblog_nav_shadow',
+				'selector' => '{{WRAPPER}} .zenblog__page, {{WRAPPER}} .zenblog__more-btn',
 			)
 		);
 
