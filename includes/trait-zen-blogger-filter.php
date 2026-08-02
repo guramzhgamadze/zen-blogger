@@ -286,8 +286,14 @@ trait Zen_Blogger_Filter_Trait {
 			'zenblog_count_text',
 			array(
 				'label'       => esc_html__( 'Result Count Text', 'zen-blogger' ),
-				/* translators: %s is a literal placeholder the user types, not a variable. */
-				'description' => esc_html__( 'Use %1$s where the number should go — for example "%2$s articles found".', 'zen-blogger' ),
+				// Built with sprintf so the placeholder the user has to type is shown
+				// as %s. Writing it inline would print "%1$s" at them instead.
+				'description' => sprintf(
+					/* translators: 1: the literal characters %s, 2: an example using the same placeholder. */
+					esc_html__( 'Use %1$s where the number should go — for example "%2$s articles found".', 'zen-blogger' ),
+					'<code>%s</code>',
+					'%s'
+				),
 				'type'        => Controls_Manager::TEXT,
 				'label_block' => true,
 				'default'     => '',

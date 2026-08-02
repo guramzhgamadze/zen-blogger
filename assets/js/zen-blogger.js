@@ -375,6 +375,10 @@
 
 			paused = ! paused;
 
+			// Remembered so the size-recovery watcher below does not helpfully
+			// restart what the visitor just stopped.
+			swiper.zenblogUserPaused = paused;
+
 			if ( paused ) {
 				swiper.autoplay.stop();
 			} else {
@@ -398,6 +402,88 @@
 		}
 
 		paint();
+	}
+
+	/**
+	 * Start autoplay once the carousel actually has a width.
+	 *
+	 * Swiper's autoplay refuses to schedule anything while the carousel measures
+	 * zero — run() opens with `if ( ! swiper.size ) { running = false; return; }`
+	 * — and nothing ever calls it again. So a carousel that initialises before
+	 * its container has been laid out comes up with autoplay permanently dead,
+	 * even though every setting says it should be running. That is the whole of
+	 * the "works in the editor, frozen on the live site" difference: optimisation
+	 * plugins defer or inline-and-async the stylesheet that gives the container
+	 * its width, so on the real page the measurement at init is zero.
+	 *
+	 * @param {Object}  swiper Swiper instance.
+	 * @param {Element} root   Widget root, watched for its size arriving.
+	 * @return {void}
+	 */
+	function bindAutoplayRecovery( swiper, root ) {
+		if ( ! swiper.autoplay || ! swiper.params.autoplay || ! swiper.params.autoplay.enabled ) {
+			return;
+		}
+
+		var observer = null;
+		var timer = null;
+		var attempts = 0;
+
+		function stopWatching() {
+			if ( observer ) {
+				observer.disconnect();
+				observer = null;
+			}
+			if ( timer ) {
+				window.clearInterval( timer );
+				timer = null;
+			}
+		}
+
+		function rearm() {
+			// Never fight the visitor: if they pressed pause, it stays paused.
+			if ( ! swiper || swiper.destroyed || swiper.zenblogUserPaused ) {
+				stopWatching();
+				return true;
+			}
+
+			if ( swiper.autoplay.running ) {
+				return true;
+			}
+
+			if ( ! swiper.size ) {
+				return false;
+			}
+
+			swiper.update();
+			swiper.autoplay.start();
+
+			return swiper.autoplay.running;
+		}
+
+		if ( rearm() ) {
+			return;
+		}
+
+		if ( window.ResizeObserver ) {
+			observer = new window.ResizeObserver( function () {
+				if ( rearm() ) {
+					stopWatching();
+				}
+			} );
+			observer.observe( root );
+		}
+
+		// A stylesheet arriving late changes the width without necessarily
+		// producing a resize entry for this element, so give up on being told and
+		// look — briefly, and only until it works.
+		timer = window.setInterval( function () {
+			attempts++;
+
+			if ( rearm() || attempts > 20 ) {
+				stopWatching();
+			}
+		}, 250 );
 	}
 
 	function initWidget( root ) {
@@ -438,6 +524,7 @@
 		politeAnnouncements( swiper );
 		bindInertSlides( swiper );
 		bindPlayPause( root, swiper, !! config.autoplay );
+		bindAutoplayRecovery( swiper, root );
 	}
 
 	function initScope( scope ) {

@@ -4,7 +4,7 @@ Tags: elementor, carousel, blog, slider, posts
 Requires at least: 6.5
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.4.1
+Stable tag: 1.5.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -115,6 +115,20 @@ Yes. The layout uses logical properties throughout and the carousel direction fo
 6. Style controls for the card, image and read-more button.
 
 == Changelog ==
+
+= 1.5.0 =
+* Fixed: pagination did nothing at all when the widget was placed in a Theme Builder template. The widget reported the post being viewed, but its settings live in the template, so every background request looked for the widget in the wrong post and was refused. It now reports the document it was placed in, and passes the displayed post separately.
+* Fixed: "Related to the current post" and "Exclude current post" were ignored from page two onwards. A background request has no current post, so the second page was built from a different query than the first.
+* Fixed: the Load More button stayed on screen after the last page. Pressing it asked for a page that does not exist and appended the "no posts found" notice below the results — the stray line of unstyled text under the grid.
+* Fixed: a card template's dynamic background image never appeared on the front end, though it showed in the editor. Elementor supplies that kind of value once per page under one shared selector, which cannot describe nine different posts; each card now carries its own scoped rule.
+* Fixed: carousel autoplay could come up dead on an optimised site. Swiper refuses to schedule anything while the carousel measures zero, and never tries again — so a stylesheet arriving late left autoplay permanently off. It now starts as soon as the carousel has a width.
+* Fixed: Load More and the page numbers rendered as bare text, with no border or background of their own.
+* New: alignment and padding controls for the paginator, plus a full-width option for the Load More button.
+* New: the Load More button's text can be edited when Infinite Scroll is selected, not only Load More.
+* New: alignment control for the excerpt, including justified.
+* New: typography, colour, alignment and spacing controls for the result count.
+* Changed: Clear Filters now takes the same style controls as the rest of the filter bar.
+* Changed: with the "Current page query" source, pagination stays as real page links. That query only exists on the page itself and cannot be rebuilt for a background request.
 
 = 1.4.1 =
 * Fixed: infinite scroll stopped after the first automatic load. It watched the paginator, which is replaced on every page, so the observer was left watching a node that was no longer in the document. It now watches a dedicated element that is never re-rendered.

@@ -309,10 +309,15 @@ class Zen_Blogger_Posts extends Widget_Base {
 		$this->add_control(
 			'zenblog_load_more_text',
 			array(
-				'label'     => esc_html__( 'Button Text', 'zen-blogger' ),
-				'type'      => Controls_Manager::TEXT,
-				'default'   => esc_html__( 'Load more posts', 'zen-blogger' ),
-				'condition' => array( 'zenblog_nav' => 'load_more' ),
+				'label'       => esc_html__( 'Button Text', 'zen-blogger' ),
+				'type'        => Controls_Manager::TEXT,
+				'label_block' => true,
+				'default'     => esc_html__( 'Load more posts', 'zen-blogger' ),
+				'dynamic'     => array( 'active' => true ),
+				// Infinite scroll renders the same button as its fallback, so the
+				// text has to be editable there too — it was previously left
+				// showing an uneditable default.
+				'condition'   => array( 'zenblog_nav' => array( 'load_more', 'infinite' ) ),
 			)
 		);
 
@@ -356,6 +361,19 @@ class Zen_Blogger_Posts extends Widget_Base {
 				'raw'             => esc_html__( 'Infinite scroll still renders a real Load More button as its fallback, and stops loading after the visitor presses it — an endless feed traps keyboard users before they can reach anything below it.', 'zen-blogger' ),
 				'content_classes' => 'elementor-descriptor',
 				'condition'       => array( 'zenblog_nav' => 'infinite' ),
+			)
+		);
+
+		$this->add_control(
+			'zenblog_nav_current_note',
+			array(
+				'type'            => Controls_Manager::RAW_HTML,
+				'raw'             => esc_html__( 'With the "Current page query" source, pagination stays as real page links. The archive query only exists on the page itself, so it cannot be rebuilt for a background request — fetching in place would quietly return the wrong posts.', 'zen-blogger' ),
+				'content_classes' => 'elementor-descriptor',
+				'condition'       => array(
+					'zenblog_source' => 'current',
+					'zenblog_nav!'   => '',
+				),
 			)
 		);
 
@@ -514,7 +532,7 @@ class Zen_Blogger_Posts extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'zenblog_filter_typography',
-				'selector' => '{{WRAPPER}} .zenblog__check label, {{WRAPPER}} .zenblog__select, {{WRAPPER}} .zenblog__search-input, {{WRAPPER}} .zenblog__filter-submit',
+				'selector' => '{{WRAPPER}} .zenblog__check label, {{WRAPPER}} .zenblog__select, {{WRAPPER}} .zenblog__search-input, {{WRAPPER}} .zenblog__filter-submit, {{WRAPPER}} .zenblog__filter-reset',
 			)
 		);
 
@@ -524,7 +542,7 @@ class Zen_Blogger_Posts extends Widget_Base {
 				'label'     => esc_html__( 'Text Color', 'zen-blogger' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
-					'{{WRAPPER}} .zenblog__check label, {{WRAPPER}} .zenblog__select, {{WRAPPER}} .zenblog__search-input, {{WRAPPER}} .zenblog__filter-submit' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .zenblog__check label, {{WRAPPER}} .zenblog__select, {{WRAPPER}} .zenblog__search-input, {{WRAPPER}} .zenblog__filter-submit, {{WRAPPER}} .zenblog__filter-reset' => 'color: {{VALUE}};',
 				),
 			)
 		);
@@ -534,7 +552,7 @@ class Zen_Blogger_Posts extends Widget_Base {
 			array(
 				'name'     => 'zenblog_filter_bg',
 				'types'    => array( 'classic', 'gradient' ),
-				'selector' => '{{WRAPPER}} .zenblog__check label, {{WRAPPER}} .zenblog__select, {{WRAPPER}} .zenblog__search-input, {{WRAPPER}} .zenblog__filter-submit',
+				'selector' => '{{WRAPPER}} .zenblog__check label, {{WRAPPER}} .zenblog__select, {{WRAPPER}} .zenblog__search-input, {{WRAPPER}} .zenblog__filter-submit, {{WRAPPER}} .zenblog__filter-reset',
 			)
 		);
 
@@ -564,7 +582,7 @@ class Zen_Blogger_Posts extends Widget_Base {
 			Group_Control_Border::get_type(),
 			array(
 				'name'     => 'zenblog_filter_border',
-				'selector' => '{{WRAPPER}} .zenblog__check label, {{WRAPPER}} .zenblog__select, {{WRAPPER}} .zenblog__search-input, {{WRAPPER}} .zenblog__filter-submit',
+				'selector' => '{{WRAPPER}} .zenblog__check label, {{WRAPPER}} .zenblog__select, {{WRAPPER}} .zenblog__search-input, {{WRAPPER}} .zenblog__filter-submit, {{WRAPPER}} .zenblog__filter-reset',
 			)
 		);
 
@@ -575,7 +593,7 @@ class Zen_Blogger_Posts extends Widget_Base {
 				'type'       => Controls_Manager::DIMENSIONS,
 				'size_units' => array( 'px', '%', 'em', 'rem' ),
 				'selectors'  => array(
-					'{{WRAPPER}} .zenblog__check label, {{WRAPPER}} .zenblog__select, {{WRAPPER}} .zenblog__search-input, {{WRAPPER}} .zenblog__filter-submit' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .zenblog__check label, {{WRAPPER}} .zenblog__select, {{WRAPPER}} .zenblog__search-input, {{WRAPPER}} .zenblog__filter-submit, {{WRAPPER}} .zenblog__filter-reset' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
 			)
 		);
@@ -587,7 +605,7 @@ class Zen_Blogger_Posts extends Widget_Base {
 				'type'       => Controls_Manager::DIMENSIONS,
 				'size_units' => array( 'px', 'em', 'rem' ),
 				'selectors'  => array(
-					'{{WRAPPER}} .zenblog__check label, {{WRAPPER}} .zenblog__select, {{WRAPPER}} .zenblog__search-input, {{WRAPPER}} .zenblog__filter-submit' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .zenblog__check label, {{WRAPPER}} .zenblog__select, {{WRAPPER}} .zenblog__search-input, {{WRAPPER}} .zenblog__filter-submit, {{WRAPPER}} .zenblog__filter-reset' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
 			)
 		);
@@ -632,6 +650,84 @@ class Zen_Blogger_Posts extends Widget_Base {
 			)
 		);
 
+		$this->add_control(
+			'zenblog_count_heading',
+			array(
+				'label'     => esc_html__( 'Result Count', 'zen-blogger' ),
+				'type'      => Controls_Manager::HEADING,
+				'separator' => 'before',
+				'condition' => array( 'zenblog_show_count' => 'yes' ),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			array(
+				'name'      => 'zenblog_count_typography',
+				'selector'  => '{{WRAPPER}} .zenblog__result-count',
+				'condition' => array( 'zenblog_show_count' => 'yes' ),
+			)
+		);
+
+		$this->add_control(
+			'zenblog_count_color',
+			array(
+				'label'     => esc_html__( 'Text Color', 'zen-blogger' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array(
+					// The stylesheet dims it to 0.8; a chosen colour should be the
+					// colour, not a faded version of it.
+					'{{WRAPPER}} .zenblog__result-count' => 'color: {{VALUE}}; opacity: 1;',
+				),
+				'condition' => array( 'zenblog_show_count' => 'yes' ),
+			)
+		);
+
+		$this->add_responsive_control(
+			'zenblog_count_align',
+			array(
+				'label'     => esc_html__( 'Alignment', 'zen-blogger' ),
+				'type'      => Controls_Manager::CHOOSE,
+				'options'   => array(
+					'left'   => array(
+						'title' => esc_html__( 'Left', 'zen-blogger' ),
+						'icon'  => 'eicon-text-align-left',
+					),
+					'center' => array(
+						'title' => esc_html__( 'Center', 'zen-blogger' ),
+						'icon'  => 'eicon-text-align-center',
+					),
+					'right'  => array(
+						'title' => esc_html__( 'Right', 'zen-blogger' ),
+						'icon'  => 'eicon-text-align-right',
+					),
+				),
+				'selectors' => array(
+					'{{WRAPPER}} .zenblog__result-count' => 'text-align: {{VALUE}};',
+				),
+				'condition' => array( 'zenblog_show_count' => 'yes' ),
+			)
+		);
+
+		$this->add_responsive_control(
+			'zenblog_count_spacing',
+			array(
+				'label'      => esc_html__( 'Space Above', 'zen-blogger' ),
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px', 'em', 'rem' ),
+				'range'      => array(
+					'px' => array(
+						'min' => 0,
+						'max' => 60,
+					),
+				),
+				'selectors'  => array(
+					'{{WRAPPER}} .zenblog__result-count' => 'margin-block-start: {{SIZE}}{{UNIT}};',
+				),
+				'condition'  => array( 'zenblog_show_count' => 'yes' ),
+			)
+		);
+
 		$this->end_controls_section();
 	}
 
@@ -647,6 +743,46 @@ class Zen_Blogger_Posts extends Widget_Base {
 				'label'     => esc_html__( 'Pagination', 'zen-blogger' ),
 				'tab'       => Controls_Manager::TAB_STYLE,
 				'condition' => array( 'zenblog_nav!' => '' ),
+			)
+		);
+
+		$this->add_responsive_control(
+			'zenblog_nav_align',
+			array(
+				'label'     => esc_html__( 'Alignment', 'zen-blogger' ),
+				'type'      => Controls_Manager::CHOOSE,
+				'options'   => array(
+					'flex-start' => array(
+						'title' => esc_html__( 'Left', 'zen-blogger' ),
+						'icon'  => 'eicon-text-align-left',
+					),
+					'center'     => array(
+						'title' => esc_html__( 'Center', 'zen-blogger' ),
+						'icon'  => 'eicon-text-align-center',
+					),
+					'flex-end'   => array(
+						'title' => esc_html__( 'Right', 'zen-blogger' ),
+						'icon'  => 'eicon-text-align-right',
+					),
+				),
+				'default'   => 'center',
+				'selectors' => array(
+					'{{WRAPPER}} .zenblog__nav' => 'justify-content: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'zenblog_nav_full_width',
+			array(
+				'label'     => esc_html__( 'Full Width Button', 'zen-blogger' ),
+				'type'      => Controls_Manager::SWITCHER,
+				'selectors' => array(
+					// Its own axis, not a fourth alignment: the row keeps whatever
+					// alignment was chosen, the button just fills it.
+					'{{WRAPPER}} .zenblog__more-btn' => 'flex: 1 1 100%;',
+				),
+				'condition' => array( 'zenblog_nav' => array( 'load_more', 'infinite' ) ),
 			)
 		);
 
@@ -718,6 +854,18 @@ class Zen_Blogger_Posts extends Widget_Base {
 				'size_units' => array( 'px', '%', 'em', 'rem' ),
 				'selectors'  => array(
 					'{{WRAPPER}} .zenblog__page, {{WRAPPER}} .zenblog__more-btn' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'zenblog_nav_padding',
+			array(
+				'label'      => esc_html__( 'Padding', 'zen-blogger' ),
+				'type'       => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', 'em', 'rem' ),
+				'selectors'  => array(
+					'{{WRAPPER}} .zenblog__page, {{WRAPPER}} .zenblog__more-btn' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
 			)
 		);
@@ -851,7 +999,16 @@ class Zen_Blogger_Posts extends Widget_Base {
 				'data-zenblog-posts' => wp_json_encode(
 					array(
 						'restUrl'   => rest_url( Zen_Blogger_Rest::NS . '/posts' ),
-						'postId'    => (int) get_queried_object_id(),
+
+						/*
+						 * The document the widget was PLACED in, which on a Theme
+						 * Builder template is not the post being viewed. See
+						 * document_id() — sending the queried ID here made every
+						 * AJAX page 404 on every theme template.
+						 */
+						'postId'    => $this->document_id(),
+						'contextId' => is_singular() ? (int) get_queried_object_id() : 0,
+						'pageUrl'   => $this->page_url(),
 						'elementId' => $this->get_id(),
 						'nav'       => $nav,
 						'ajax'      => $this->ajax_enabled( $settings ),
@@ -1010,6 +1167,17 @@ class Zen_Blogger_Posts extends Widget_Base {
 		}
 
 		/*
+		 * Load More and infinite scroll have nothing left to offer on the final
+		 * page, so the whole paginator goes. It used to keep rendering a button
+		 * that pointed one page past the end; pressing it fetched an empty
+		 * result and appended the "no posts found" notice under the cards —
+		 * which reads as a stray line of unstyled text below the grid.
+		 */
+		if ( ( 'load_more' === $nav || 'infinite' === $nav ) && $paged >= $maxpage ) {
+			return;
+		}
+
+		/*
 		 * Built from the page's own URL, not the current request. When this runs
 		 * inside the REST callback the current request is /wp-json/..., and the
 		 * no-JavaScript fallback links would point visitors at raw JSON.
@@ -1149,7 +1317,13 @@ class Zen_Blogger_Posts extends Widget_Base {
 
 		if ( $query->have_posts() ) {
 			$this->render_items( $settings, $query, $paged );
-		} else {
+		} elseif ( $paged < 2 ) {
+			/*
+			 * "No posts found" answers "your filters matched nothing". Past page
+			 * one it would instead be answering "you asked for a page that does
+			 * not exist" — and in append mode that notice lands underneath a grid
+			 * full of results, saying the opposite of what the visitor can see.
+			 */
 			$this->render_empty_state( $settings );
 		}
 
@@ -1355,12 +1529,93 @@ class Zen_Blogger_Posts extends Widget_Base {
 	private function ajax_enabled( array $settings ) {
 		$nav = isset( $settings['zenblog_nav'] ) ? $settings['zenblog_nav'] : '';
 
+		/*
+		 * "Current page query" inherits the main query's vars, and the main query
+		 * for an archive simply does not exist inside a REST request — it would
+		 * silently inherit an empty one and return site-wide latest posts instead
+		 * of the archive. Real page links reload the archive properly, so that is
+		 * what this source gets.
+		 */
+		if ( 'current' === ( isset( $settings['zenblog_source'] ) ? $settings['zenblog_source'] : '' ) ) {
+			return false;
+		}
+
 		if ( 'load_more' === $nav || 'infinite' === $nav ) {
 			return true;
 		}
 
 		return in_array( $nav, array( 'numbers', 'prev_next' ), true )
 			&& 'yes' === ( isset( $settings['zenblog_nav_ajax'] ) ? $settings['zenblog_nav_ajax'] : '' );
+	}
+
+	/**
+	 * ID of the Elementor document this widget was placed in.
+	 *
+	 * This is deliberately NOT get_queried_object_id(). On a Theme Builder
+	 * template the widget's settings live in the template post, while the
+	 * queried object is whichever post the template happens to be rendering —
+	 * so looking the element up by the queried ID finds nothing and every AJAX
+	 * page returns 404. Elementor switches the current document before it
+	 * renders elements (Frontend::get_builder_content) precisely so a widget
+	 * can ask which document it belongs to.
+	 *
+	 * @return int
+	 */
+	private function document_id() {
+		if ( class_exists( '\Elementor\Plugin' ) && isset( \Elementor\Plugin::$instance->documents ) ) {
+			$document = \Elementor\Plugin::$instance->documents->get_current();
+
+			// get_main_id() rather than get_id(): inside a revision or autosave
+			// the settings the front end reads belong to the parent.
+			if ( $document && method_exists( $document, 'get_main_id' ) ) {
+				$id = (int) $document->get_main_id();
+
+				if ( $id ) {
+					return $id;
+				}
+			}
+		}
+
+		// Rendered outside a document — a shortcode, or a test harness.
+		$id = (int) get_the_ID();
+
+		return $id ? $id : (int) get_queried_object_id();
+	}
+
+	/**
+	 * URL of the page the visitor is actually on.
+	 *
+	 * Sent to the REST endpoint so paging links in a fetched response point back
+	 * here. The endpoint re-validates it against the site's own host before use.
+	 *
+	 * @return string
+	 */
+	private function page_url() {
+		$url = '';
+
+		if ( is_singular() ) {
+			$url = (string) get_permalink( get_queried_object_id() );
+		}
+
+		if ( '' === $url && ! is_admin() ) {
+			// Archives, the blog index, search: whatever listing this is.
+			$url = (string) get_pagenum_link( 1 );
+		}
+
+		if ( '' === $url ) {
+			return '';
+		}
+
+		// This widget's own state is rebuilt from the request, never inherited
+		// from the URL it was rendered at.
+		return remove_query_arg(
+			array(
+				self::page_arg( 'zenblog-' . $this->get_id() ),
+				$this->search_arg( 'zenblog-' . $this->get_id() ),
+				$this->sort_arg( 'zenblog-' . $this->get_id() ),
+			),
+			$url
+		);
 	}
 
 	/**

@@ -127,10 +127,23 @@
 
 		function endpoint( paged, query ) {
 			var url = new URL( cfg.restUrl, window.location.origin );
+
+			// post_id is the document the widget is STORED in; context_id is the
+			// post it is being displayed for. On a theme template those are two
+			// different posts, and the server needs both.
 			url.searchParams.set( 'post_id', cfg.postId );
 			url.searchParams.set( 'element_id', cfg.elementId );
 			url.searchParams.set( 'paged', paged );
 			url.searchParams.set( 'query', query );
+
+			if ( cfg.contextId ) {
+				url.searchParams.set( 'context_id', cfg.contextId );
+			}
+
+			if ( cfg.pageUrl ) {
+				url.searchParams.set( 'page_url', cfg.pageUrl );
+			}
+
 			return url.toString();
 		}
 
@@ -377,6 +390,15 @@
 
 			if ( more ) {
 				e.preventDefault();
+
+				// The server stops rendering this button on the last page, so
+				// reaching here past the end means stale markup — asking for a
+				// page that does not exist would append an empty result.
+				if ( state.paged >= state.maxPages ) {
+					updateNav( '' );
+					return;
+				}
+
 				state.autoRuns = 0; // pressing the button re-arms auto-loading
 				load( state.paged + 1, filterQuery(), true, true );
 			}

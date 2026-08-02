@@ -980,6 +980,14 @@ input[type="search"].zenblog__search-input {
 	margin-block-start: 40px;
 }
 
+/*
+ * These are controls, and they have to read as controls before a single style
+ * control is touched. With no border and no background they rendered as bare
+ * text under the grid — "Load more posts" looked like a stray sentence rather
+ * than something to press. currentColor keeps it theme-neutral, and Elementor's
+ * generated selectors are 0-2-0 against this 0-1-0, so every Border, Background
+ * and Radius control still overrides it.
+ */
 .zenblog__page,
 .zenblog__more-btn {
 	display: inline-flex;
@@ -988,6 +996,8 @@ input[type="search"].zenblog__search-input {
 	min-width: 44px;
 	min-height: 44px;
 	padding: 0.5em 1em;
+	border: 1px solid currentColor;
+	border-radius: 4px;
 	text-decoration: none;
 	line-height: 1.4;
 	cursor: pointer;

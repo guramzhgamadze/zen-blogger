@@ -85,6 +85,18 @@ final class Zen_Blogger_Rest {
 						 */
 						'sanitize_callback' => array( __CLASS__, 'sanitize_query' ),
 					),
+					'context_id' => array(
+						'type'              => 'integer',
+						'default'           => 0,
+						'description'       => 'Post the widget is being displayed for, when that is not the post it is stored in.',
+						'sanitize_callback' => 'absint',
+					),
+					'page_url'   => array(
+						'type'              => 'string',
+						'default'           => '',
+						'description'       => 'URL of the page the widget is on; re-validated against this site before use.',
+						'sanitize_callback' => 'esc_url_raw',
+					),
 				),
 			)
 		);
@@ -171,9 +183,68 @@ final class Zen_Blogger_Rest {
 		 */
 		$state = $widget->parse_filter_query( $query );
 
-		// The page's own permalink, so paging links in the returned markup point at
-		// the page rather than at this endpoint.
-		return rest_ensure_response( $widget->render_ajax_page( $paged, $state, (string) get_permalink( $post_id ) ) );
+		/*
+		 * Where paging links in the returned markup should point. It arrives from
+		 * the client, so it is put through the same check core uses before it will
+		 * send anyone anywhere: off-site values are discarded, not followed. The
+		 * fallback is the document's own permalink, which is right for an ordinary
+		 * page and merely unhelpful for a theme template.
+		 */
+		$page_url = wp_validate_redirect( (string) $request->get_param( 'page_url' ), '' );
+
+		if ( '' === $page_url ) {
+			$page_url = (string) get_permalink( $post_id );
+		}
+
+		/*
+		 * Restore the post the widget was being displayed for. "Related to the
+		 * current post" and "Exclude current post" both ask get_the_ID(), and in a
+		 * REST request there is no current post at all — so page two came back
+		 * built from a different query than page one, quietly repeating or
+		 * dropping posts.
+		 */
+		$restore = self::enter_context( (int) $request->get_param( 'context_id' ) );
+
+		$response = $widget->render_ajax_page( $paged, $state, $page_url );
+
+		$restore();
+
+		return rest_ensure_response( $response );
+	}
+
+	/**
+	 * Set up the displayed-post context, returning the undo.
+	 *
+	 * @param int $context_id Post being displayed, 0 for none.
+	 * @return callable Restores the previous global state.
+	 */
+	private static function enter_context( $context_id ) {
+		global $post;
+
+		$previous = $post;
+		$noop     = static function () use ( $previous ) {
+			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Restoring the value this function replaced.
+			$GLOBALS['post'] = $previous;
+			wp_reset_postdata();
+		};
+
+		if ( ! $context_id ) {
+			return $noop;
+		}
+
+		$context = get_post( $context_id );
+
+		// Only a post a visitor could already be reading. Anything else — a draft,
+		// a password-protected post — is not a context this endpoint will adopt.
+		if ( ! $context || 'publish' !== get_post_status( $context ) || post_password_required( $context ) ) {
+			return $noop;
+		}
+
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Deliberate, and undone by the returned callable.
+		$GLOBALS['post'] = $context;
+		setup_postdata( $context );
+
+		return $noop;
 	}
 
 	/**

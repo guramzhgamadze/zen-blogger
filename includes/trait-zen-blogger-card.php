@@ -591,15 +591,16 @@ trait Zen_Blogger_Card_Trait {
 		$this->add_control(
 			'zenblog_source',
 			array(
-				'label'   => esc_html__( 'Source', 'zen-blogger' ),
-				'type'    => Controls_Manager::SELECT,
-				'default' => 'latest',
-				'options' => array(
+				'label'       => esc_html__( 'Source', 'zen-blogger' ),
+				'type'        => Controls_Manager::SELECT,
+				'default'     => 'latest',
+				'options'     => array(
 					'latest'  => esc_html__( 'Latest posts', 'zen-blogger' ),
 					'related' => esc_html__( 'Related to the current post', 'zen-blogger' ),
 					'manual'  => esc_html__( 'Hand-picked', 'zen-blogger' ),
-					'current' => esc_html__( 'Current page query (archives)', 'zen-blogger' ),
+					'current' => esc_html__( 'Current Query', 'zen-blogger' ),
 				),
+				'description' => esc_html__( 'Current Query inherits whatever the page itself is already showing — an archive, a search result, the blog index — so the widget follows the template it is placed in rather than defining a query of its own.', 'zen-blogger' ),
 			)
 		);
 
@@ -1815,6 +1816,43 @@ trait Zen_Blogger_Card_Trait {
 			)
 		);
 
+		$this->add_responsive_control(
+			'zenblog_excerpt_align',
+			array(
+				'label'     => esc_html__( 'Alignment', 'zen-blogger' ),
+				'type'      => Controls_Manager::CHOOSE,
+				'options'   => array(
+					'left'    => array(
+						'title' => esc_html__( 'Left', 'zen-blogger' ),
+						'icon'  => 'eicon-text-align-left',
+					),
+					'center'  => array(
+						'title' => esc_html__( 'Center', 'zen-blogger' ),
+						'icon'  => 'eicon-text-align-center',
+					),
+					'right'   => array(
+						'title' => esc_html__( 'Right', 'zen-blogger' ),
+						'icon'  => 'eicon-text-align-right',
+					),
+					'justify' => array(
+						'title' => esc_html__( 'Justified', 'zen-blogger' ),
+						'icon'  => 'eicon-text-align-justify',
+					),
+				),
+
+				/*
+				 * Separate from Content Alignment because justified is not one of
+				 * the same four things: that control also drives align-items on the
+				 * card, and "justify" is not a value align-items has. The body
+				 * alignment stays the default here so a justified paragraph is not
+				 * fighting a shrink-wrapped column.
+				 */
+				'selectors' => array(
+					'{{WRAPPER}} .zenblog__excerpt' => 'text-align: {{VALUE}}; align-self: stretch; width: 100%;',
+				),
+			)
+		);
+
 		$this->end_controls_section();
 	}
 
@@ -2129,12 +2167,75 @@ trait Zen_Blogger_Card_Trait {
 		 */
 		$with_css = ( 1 === (int) $index );
 
-		echo '<div class="zenblog__template">';
+		// Anything the template styles from a dynamic tag has to be scoped to this
+		// card, because the shared stylesheet can only describe one post.
+		$scope = 'zenblog-tpl-' . (int) get_the_ID();
+
+		echo '<div class="zenblog__template ' . esc_attr( $scope ) . '">';
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Elementor-generated markup from a user-selected template.
 		echo \Elementor\Plugin::$instance->frontend->get_builder_content_for_display( $template_id, $with_css );
+		$this->print_template_dynamic_css( $template_id, $scope );
 		echo '</div>';
 
 		return true;
+	}
+
+	/**
+	 * Emit this card's share of the template's dynamic CSS.
+	 *
+	 * Elementor keeps dynamic-tag values that render as CSS out of a document's
+	 * cached stylesheet and supplies them separately, once per request, against
+	 * the current post. In a loop that is both too few times and under a selector
+	 * shared by every card, so a container background bound to the featured image
+	 * simply never appears. Generating it here, scoped per card, is what makes it
+	 * vary by post — see Zen_Blogger_Template_CSS.
+	 *
+	 * @param int    $template_id Template post ID.
+	 * @param string $scope       Class the card wrapper carries.
+	 * @return void
+	 */
+	private function print_template_dynamic_css( $template_id, $scope ) {
+		if ( ! class_exists( '\Elementor\Core\DynamicTags\Dynamic_CSS' ) || ! class_exists( '\Elementor\Core\Files\CSS\Post' ) ) {
+			return;
+		}
+
+		$post_css = \Elementor\Core\Files\CSS\Post::create( $template_id );
+		$meta     = $post_css->get_meta();
+
+		// dynamic_elements_ids is only recorded when the stylesheet is generated.
+		if ( empty( $meta['status'] ) ) {
+			$post_css->update();
+			$meta = $post_css->get_meta();
+		}
+
+		// The overwhelming majority of templates style nothing dynamically, and
+		// this is the check that keeps them from paying for a second CSS parse
+		// on every single card.
+		if ( empty( $meta['dynamic_elements_ids'] ) ) {
+			return;
+		}
+
+		if ( ! class_exists( 'Zen_Blogger_Template_CSS' ) ) {
+			require_once ZENBLOG_PATH . 'includes/class-zen-blogger-template-css.php';
+		}
+
+		/*
+		 * Constructed directly rather than through create(): the files manager
+		 * caches instances by class and arguments, which would hand every card
+		 * the first card's CSS.
+		 */
+		$css = new Zen_Blogger_Template_CSS( $template_id, $post_css );
+		$css->zenblog_set_scope( '.' . $scope );
+
+		$content = trim( (string) $css->get_content() );
+
+		if ( '' === $content ) {
+			return;
+		}
+
+		// Printed inline rather than enqueued: by the time a card renders, the
+		// stylesheet this would attach to has long since gone out in the head.
+		printf( '<style>%s</style>', $content ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Elementor-generated CSS.
 	}
 
 	/**
