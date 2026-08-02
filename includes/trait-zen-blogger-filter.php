@@ -190,6 +190,65 @@ trait Zen_Blogger_Filter_Trait {
 			)
 		);
 
+		$sort_repeater = new \Elementor\Repeater();
+
+		$sort_repeater->add_control(
+			'sort_key',
+			array(
+				'label'   => esc_html__( 'Order', 'zen-blogger' ),
+				'type'    => Controls_Manager::SELECT,
+				'default' => '',
+				'options' => $this->sort_keys(),
+			)
+		);
+
+		$sort_repeater->add_control(
+			'sort_label',
+			array(
+				'label'       => esc_html__( 'Label', 'zen-blogger' ),
+				'description' => esc_html__( 'What the visitor sees. Leave empty to use the built-in wording.', 'zen-blogger' ),
+				'type'        => Controls_Manager::TEXT,
+				'label_block' => true,
+				'dynamic'     => array( 'active' => true ),
+			)
+		);
+
+		$this->add_control(
+			'zenblog_sort_items',
+			array(
+				'label'       => esc_html__( 'Sort Options', 'zen-blogger' ),
+				'description' => esc_html__( 'Choose which orders to offer and what to call them. Drag to reorder; the first row is the default.', 'zen-blogger' ),
+				'type'        => Controls_Manager::REPEATER,
+				'fields'      => $sort_repeater->get_controls(),
+				// {{ }} not {{{ }}} — the label is user-typed, and a triple brace
+				// injects it raw into the panel. That is an editor-context XSS and
+				// wp.org review rejects it; the double brace escapes via _.escape().
+				'title_field' => '{{ sort_label || sort_key || "Newest first" }}',
+				'default'     => array(
+					array(
+						'sort_key'   => '',
+						'sort_label' => esc_html__( 'Newest first', 'zen-blogger' ),
+					),
+					array(
+						'sort_key'   => 'oldest',
+						'sort_label' => esc_html__( 'Oldest first', 'zen-blogger' ),
+					),
+					array(
+						'sort_key'   => 'title',
+						'sort_label' => esc_html__( 'Title A–Z', 'zen-blogger' ),
+					),
+					array(
+						'sort_key'   => 'comments',
+						'sort_label' => esc_html__( 'Most discussed', 'zen-blogger' ),
+					),
+				),
+				'condition'   => array(
+					'zenblog_filter' => 'yes',
+					'zenblog_sort'   => 'yes',
+				),
+			)
+		);
+
 		$this->add_control(
 			'zenblog_show_count',
 			array(
@@ -224,10 +283,21 @@ trait Zen_Blogger_Filter_Trait {
 		);
 
 		$this->add_control(
+			'zenblog_filter_auto',
+			array(
+				'label'       => esc_html__( 'Apply Automatically', 'zen-blogger' ),
+				'description' => esc_html__( 'Results update as soon as a filter changes, so the Apply button is hidden as redundant. It is still rendered for visitors without JavaScript. Switch this off to require an explicit Apply.', 'zen-blogger' ),
+				'type'        => Controls_Manager::SWITCHER,
+				'default'     => 'yes',
+				'condition'   => array( 'zenblog_filter' => 'yes' ),
+			)
+		);
+
+		$this->add_control(
 			'zenblog_filter_submit_text',
 			array(
-				'label'       => esc_html__( 'Submit Text', 'zen-blogger' ),
-				'description' => esc_html__( 'Shown to everyone when JavaScript is off, and always available to keyboard users.', 'zen-blogger' ),
+				'label'       => esc_html__( 'Apply Button Text', 'zen-blogger' ),
+				'description' => esc_html__( 'Used by the no-JavaScript fallback, and shown to everyone when Apply Automatically is off.', 'zen-blogger' ),
 				'type'        => Controls_Manager::TEXT,
 				'default'     => esc_html__( 'Apply', 'zen-blogger' ),
 				'condition'   => array( 'zenblog_filter' => 'yes' ),
@@ -327,7 +397,7 @@ trait Zen_Blogger_Filter_Trait {
 	 *
 	 * @return array<string,string>
 	 */
-	private function sort_options() {
+	private function sort_keys() {
 		return array(
 			''           => esc_html__( 'Newest first', 'zen-blogger' ),
 			'oldest'     => esc_html__( 'Oldest first', 'zen-blogger' ),
@@ -337,6 +407,38 @@ trait Zen_Blogger_Filter_Trait {
 			'modified'   => esc_html__( 'Recently updated', 'zen-blogger' ),
 			'rand'       => esc_html__( 'Random', 'zen-blogger' ),
 		);
+	}
+
+	/**
+	 * The sort options this widget actually offers, keyed by URL value.
+	 *
+	 * Built from the repeater so the site owner controls both which orders appear
+	 * and what they are called. Keys are still checked against sort_keys(), so a
+	 * hand-edited URL cannot introduce an order the widget does not implement.
+	 *
+	 * @param array $settings Widget settings.
+	 * @return array<string,string>
+	 */
+	private function sort_options( array $settings ) {
+		$allowed = $this->sort_keys();
+		$rows    = isset( $settings['zenblog_sort_items'] ) ? (array) $settings['zenblog_sort_items'] : array();
+		$options = array();
+
+		foreach ( $rows as $row ) {
+			$key = isset( $row['sort_key'] ) ? (string) $row['sort_key'] : '';
+
+			if ( ! array_key_exists( $key, $allowed ) || isset( $options[ $key ] ) ) {
+				continue;
+			}
+
+			$label = isset( $row['sort_label'] ) ? trim( (string) $row['sort_label'] ) : '';
+
+			$options[ $key ] = '' !== $label ? $label : $allowed[ $key ];
+		}
+
+		// An empty or fully invalid repeater would leave the visitor with no way to
+		// sort at all; fall back to the built-in list rather than an empty <select>.
+		return $options ? $options : $allowed;
 	}
 
 	/**
@@ -408,7 +510,7 @@ trait Zen_Blogger_Filter_Trait {
 		if ( 'yes' === ( isset( $settings['zenblog_sort'] ) ? $settings['zenblog_sort'] : '' ) ) {
 			$key = $this->sort_arg( $uid );
 			$raw = isset( $source[ $key ] ) ? sanitize_key( $source[ $key ] ) : '';
-			if ( array_key_exists( $raw, $this->sort_options() ) ) {
+			if ( array_key_exists( $raw, $this->sort_options( $settings ) ) ) {
 				$state['sort'] = $raw;
 			}
 		}
@@ -509,7 +611,15 @@ trait Zen_Blogger_Filter_Trait {
 				}
 				?>
 
-				<button type="submit" class="zenblog__filter-submit">
+				<?php
+				/*
+				 * Rendered always, because without JavaScript it is the only way to
+				 * apply anything. When results update on change it is redundant, so
+				 * the script hides it on init — progressive enhancement, not a
+				 * server-side guess about whether JS will run.
+				 */
+				?>
+				<button type="submit" class="zenblog__filter-submit" data-zenblog-auto="<?php echo esc_attr( 'yes' === ( isset( $settings['zenblog_filter_auto'] ) ? $settings['zenblog_filter_auto'] : 'yes' ) ? '1' : '0' ); ?>">
 					<?php echo esc_html( $this->text_or( $settings, 'zenblog_filter_submit_text', __( 'Apply', 'zen-blogger' ) ) ); ?>
 				</button>
 
@@ -602,7 +712,7 @@ trait Zen_Blogger_Filter_Trait {
 				<?php echo esc_html( $this->text_or( $settings, 'zenblog_sort_label', __( 'Sort by', 'zen-blogger' ) ) ); ?>
 			</label>
 			<select id="<?php echo esc_attr( $id ); ?>" class="zenblog__select" name="<?php echo esc_attr( $this->sort_arg( $uid ) ); ?>">
-				<?php foreach ( $this->sort_options() as $value => $label ) : ?>
+				<?php foreach ( $this->sort_options( $settings ) as $value => $label ) : ?>
 					<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $state['sort'], $value ); ?>>
 						<?php echo esc_html( $label ); ?>
 					</option>

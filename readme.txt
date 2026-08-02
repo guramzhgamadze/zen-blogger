@@ -4,7 +4,7 @@ Tags: elementor, carousel, blog, slider, posts
 Requires at least: 6.5
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.2.2
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -116,6 +116,11 @@ Yes. The layout uses logical properties throughout and the carousel direction fo
 
 == Changelog ==
 
+= 1.3.0 =
+* New: sort options are now a repeater. Choose which orders to offer, rename each one, and drag to reorder — the first row is the default.
+* Changed: the Apply button is hidden once the script takes over, because results already update as a filter changes. It is still rendered for visitors without JavaScript, and a new "Apply Automatically" switch turns auto-updating off if you prefer an explicit Apply.
+* Fixed: the sort repeater's row label used a triple brace, which injects user-typed text raw into the editor panel.
+
 = 1.2.2 =
 * New: excerpts are built from paragraphs only, so headings, list items, captions and table cells no longer end up in the card text. Choose "all content" if you preferred the old behaviour.
 * New: meta can sit under the title or at the foot of the card, with an optional divider you can colour, thicken and space.
@@ -155,6 +160,9 @@ Yes. The layout uses logical properties throughout and the carousel direction fo
 * schema.org ItemList output in JSON-LD, with a Zen GEO integration that shares node identity instead of duplicating it.
 
 == Upgrade Notice ==
+
+= 1.3.0 =
+Editable sort options, and no more redundant Apply button.
 
 = 1.2.2 =
 Cleaner excerpts, meta positioning, and a focus ring that is actually visible.

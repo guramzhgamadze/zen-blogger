@@ -283,6 +283,20 @@
 
 		syncResetVisibility();
 
+		/*
+		 * With results updating on change, a separate Apply button asks the visitor
+		 * to do something the widget has already done. It is hidden here rather
+		 * than omitted server-side, because without JavaScript it is the only way
+		 * to apply anything at all — so it has to exist in the HTML first and be
+		 * withdrawn once this script proves it can take over.
+		 */
+		var submit = root.querySelector( '.zenblog__filter-submit' );
+		var autoApply = ! submit || '0' !== submit.getAttribute( 'data-zenblog-auto' );
+
+		if ( submit && autoApply ) {
+			submit.hidden = true;
+		}
+
 		if ( form ) {
 			// Submitting still works with the keyboard and is the no-JS path; here
 			// it just becomes an in-place fetch.
@@ -294,7 +308,7 @@
 			// Radios, checkboxes and selects apply immediately — but focus is NOT
 			// moved, because the visitor is still working through the controls.
 			form.addEventListener( 'change', function ( e ) {
-				if ( closest( e.target, '.zenblog__search-input' ) ) {
+				if ( ! autoApply || closest( e.target, '.zenblog__search-input' ) ) {
 					return;
 				}
 				applyFilters( false );
@@ -302,7 +316,7 @@
 
 			var searchInput = form.querySelector( '.zenblog__search-input' );
 
-			if ( searchInput ) {
+			if ( searchInput && autoApply ) {
 				var timer = null;
 				searchInput.addEventListener( 'input', function () {
 					window.clearTimeout( timer );
