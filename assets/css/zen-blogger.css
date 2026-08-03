@@ -928,6 +928,21 @@ input[type="search"].zenblog__search-input {
 	transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
+/*
+ * The filter bar is made of controls, and they have to read as controls before a
+ * single style control is touched. With no border and no background a pill and
+ * the Clear button are indistinguishable from a row of stray words — the same
+ * defect the paginator had. currentColor keeps it theme-neutral, and Elementor's
+ * generated selectors are 0-3-0 against this, so every Border, Background and
+ * Radius control still overrides it.
+ */
+.zenblog__check--pill label,
+.zenblog__filter-reset,
+.zenblog__filter-submit {
+	border: 1px solid currentColor;
+	border-radius: 4px;
+}
+
 /* Focus must follow the hidden input onto its visible label, or keyboard users
    get no focus indicator at all. */
 
@@ -948,7 +963,7 @@ input[type="search"].zenblog__search-input {
 	text-decoration: none;
 	cursor: pointer;
 	background: none;
-	border: 0;
+	/* Border comes from the shared control rule above, as with Clear. */
 }
 
 .zenblog__result-count {
@@ -1143,7 +1158,8 @@ input[type="search"].zenblog__search-input {
 	line-height: 1.4;
 	cursor: pointer;
 	background: none;
-	border: 0;
+	/* Border comes from the shared control rule above — not reset here, or this
+	   later declaration would win on equal specificity and strip it again. */
 }
 
 .zenblog__filter-reset[hidden] {

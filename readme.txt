@@ -4,7 +4,7 @@ Tags: elementor, carousel, blog, slider, posts
 Requires at least: 6.5
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.7.2
+Stable tag: 1.7.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -116,6 +116,9 @@ Yes. The layout uses logical properties throughout and the carousel direction fo
 6. Style controls for the card, image and read-more button.
 
 == Changelog ==
+
+= 1.7.3 =
+* Fixed: the filter pills, Clear and Apply had no border or background of their own, so the whole bar read as a row of stray words rather than controls. They now carry the same neutral outline the paginator got, which any Border, Background or Radius control still overrides.
 
 = 1.7.2 =
 * Fixed: the Clear button took the theme's button colour on hover and kept it on focus after being clicked, while the filter controls beside it did not. Themes style bare `button:hover` and `button:focus` at a specificity a single class cannot beat — Astra does exactly this. Those states are now held to the filter bar's own design, and every filter style control reaches them too, so a colour or background set for the bar carries into hover and focus instead of being dropped.
