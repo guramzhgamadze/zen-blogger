@@ -482,6 +482,11 @@
 				}
 
 				state.autoRuns = 0; // pressing the button re-arms auto-loading
+
+				if ( observer ) {
+					root.classList.add( 'zenblog--auto' );
+				}
+
 				load( state.paged + 1, filterQuery(), true, true );
 			}
 		} );
@@ -541,6 +546,8 @@
 							}
 
 							if ( state.autoRuns >= autoMax ) {
+								// Hand control back: show the real button again.
+								root.classList.remove( 'zenblog--auto' );
 								return;
 							}
 
@@ -550,6 +557,13 @@
 					},
 					{ rootMargin: '300px' }
 				);
+				/*
+				 * Auto-loading is live, so the button has nothing to say — the
+				 * stylesheet swaps it for the spinner while this class is set,
+				 * keeping it reachable by Tab. It comes off again the moment
+				 * auto-loading pauses, which is when there IS something to press.
+				 */
+				root.classList.add( 'zenblog--auto' );
 				observer.observe( sentinel );
 			}
 		}

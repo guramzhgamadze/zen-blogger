@@ -1287,7 +1287,11 @@ class Zen_Blogger_Posts extends Widget_Base {
 			};
 		}
 
-		echo '<nav class="zenblog__nav" aria-label="' . esc_attr__( 'Posts pagination', 'zen-blogger' ) . '">';
+		printf(
+			'<nav class="zenblog__nav%1$s" aria-label="%2$s">',
+			( 'infinite' === $nav ) ? ' zenblog__nav--infinite' : '',
+			esc_attr__( 'Posts pagination', 'zen-blogger' )
+		);
 
 		if ( 'load_more' === $nav || 'infinite' === $nav ) {
 			// Even infinite scroll renders a real button: it is the no-JS fallback,
@@ -1301,6 +1305,13 @@ class Zen_Blogger_Posts extends Widget_Base {
 				esc_attr( $uid ),
 				esc_html( $text )
 			);
+
+			/*
+			 * The loading indicator. Purely decorative — the count of results is
+			 * announced through the polite status line, so a screen reader is told
+			 * what happened rather than that something is spinning.
+			 */
+			echo '<span class="zenblog__spinner" aria-hidden="true"></span>';
 
 			echo '</nav>';
 			return;

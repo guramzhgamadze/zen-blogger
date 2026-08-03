@@ -4,7 +4,7 @@ Tags: elementor, carousel, blog, slider, posts
 Requires at least: 6.5
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.7.4
+Stable tag: 1.8.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -116,6 +116,11 @@ Yes. The layout uses logical properties throughout and the carousel direction fo
 6. Style controls for the card, image and read-more button.
 
 == Changelog ==
+
+= 1.8.0 =
+* Changed: with infinite scroll the feed loads itself, so it no longer shows a button telling you to do what it is already doing. A small spinner appears while a page is fetched, and the button returns — visible — once auto-loading reaches its limit and there is genuinely something to press. It stays reachable by Tab throughout, and remains a real link for visitors without JavaScript.
+* Fixed: the loading spinner was styled but never rendered, so no pagination mode has ever shown one.
+* Removed: the outline the paginator drew around Load More and the page numbers. The Border, Background and Radius controls are still there for anyone who wants one.
 
 = 1.7.4 =
 * Changed: Clear and Apply now take the Selected Text Color and Selected Background — the same pair that marks a chosen term — so an action reads as a button using a colour the bar already defines. The borders 1.7.3 put on every pill are gone with them.
