@@ -4,7 +4,7 @@ Tags: elementor, carousel, blog, slider, posts
 Requires at least: 6.5
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.7.3
+Stable tag: 1.7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -116,6 +116,9 @@ Yes. The layout uses logical properties throughout and the carousel direction fo
 6. Style controls for the card, image and read-more button.
 
 == Changelog ==
+
+= 1.7.4 =
+* Changed: Clear and Apply now take the Selected Text Color and Selected Background — the same pair that marks a chosen term — so an action reads as a button using a colour the bar already defines. The borders 1.7.3 put on every pill are gone with them.
 
 = 1.7.3 =
 * Fixed: the filter pills, Clear and Apply had no border or background of their own, so the whole bar read as a row of stray words rather than controls. They now carry the same neutral outline the paginator got, which any Border, Background or Radius control still overrides.

@@ -936,12 +936,13 @@ input[type="search"].zenblog__search-input {
  * generated selectors are 0-3-0 against this, so every Border, Background and
  * Radius control still overrides it.
  */
-.zenblog__check--pill label,
-.zenblog__filter-reset,
-.zenblog__filter-submit {
-	border: 1px solid currentColor;
-	border-radius: 4px;
-}
+/*
+ * Nothing here invents a border. Clear and Apply are actions rather than
+ * options, and they take their look from the Selected Text Color / Selected
+ * Background controls — the same pair that marks a chosen pill — so a filter bar
+ * that has been styled at all already describes them, and one that has not stays
+ * flat rather than growing outlines the site never asked for.
+ */
 
 /* Focus must follow the hidden input onto its visible label, or keyboard users
    get no focus indicator at all. */
@@ -1017,6 +1018,11 @@ input[type="search"].zenblog__search-input {
 	line-height: 1.4;
 	cursor: pointer;
 	transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+/* The page you are on is the one that should look pressed, not outlined. */
+.zenblog__page[aria-current="page"] {
+	border-color: currentColor;
 }
 
 /* Busy state: dim the grid but keep it readable, and block clicks on stale rows. */

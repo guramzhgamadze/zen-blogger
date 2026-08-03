@@ -580,10 +580,13 @@ class Zen_Blogger_Posts extends Widget_Base {
 		$this->add_control(
 			'zenblog_filter_color_active',
 			array(
-				'label'     => esc_html__( 'Selected Text Color', 'zen-blogger' ),
-				'type'      => Controls_Manager::COLOR,
-				'selectors' => array(
-					'{{WRAPPER}} .zenblog__check input:checked + label' => 'color: {{VALUE}};',
+				'label'       => esc_html__( 'Selected Text Color', 'zen-blogger' ),
+				'description' => esc_html__( 'Also used for the Clear and Apply buttons, so an action reads the same as a chosen term instead of needing a border of its own.', 'zen-blogger' ),
+				'type'        => Controls_Manager::COLOR,
+				'selectors'   => array(
+					// The hover/focus states are included or the theme reclaims them:
+					// a bare button:hover outranks a single class.
+					'{{WRAPPER}} .zenblog__check input:checked + label, {{WRAPPER}} .zenblog__filter-reset, {{WRAPPER}} .zenblog__filter-reset:hover, {{WRAPPER}} .zenblog__filter-reset:focus, {{WRAPPER}} .zenblog__filter-submit, {{WRAPPER}} .zenblog__filter-submit:hover, {{WRAPPER}} .zenblog__filter-submit:focus' => 'color: {{VALUE}};',
 				),
 			)
 		);
@@ -594,7 +597,7 @@ class Zen_Blogger_Posts extends Widget_Base {
 				'label'     => esc_html__( 'Selected Background', 'zen-blogger' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
-					'{{WRAPPER}} .zenblog__check input:checked + label' => 'background: {{VALUE}};',
+					'{{WRAPPER}} .zenblog__check input:checked + label, {{WRAPPER}} .zenblog__filter-reset, {{WRAPPER}} .zenblog__filter-reset:hover, {{WRAPPER}} .zenblog__filter-reset:focus, {{WRAPPER}} .zenblog__filter-submit, {{WRAPPER}} .zenblog__filter-submit:hover, {{WRAPPER}} .zenblog__filter-submit:focus' => 'background: {{VALUE}};',
 				),
 			)
 		);
