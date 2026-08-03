@@ -1150,6 +1150,26 @@ input[type="search"].zenblog__search-input {
 	display: none;
 }
 
+/*
+ * Themes routinely paint bare `button:hover` / `button:focus` with the site
+ * accent — Astra does exactly that, at 0-1-1, which outranks a single class.
+ * The result is that Clear, the only control in this bar that is a <button>
+ * rather than a <label>, flips to the theme's button colour on hover and then
+ * STAYS there on focus after it is clicked, while everything beside it does not.
+ *
+ * Doubling the root class reaches 0-3-0, so this wins — and it only restores
+ * what the resting state already is. The Elementor hover controls target the
+ * same states at 0-3-0 of their own and still override it.
+ */
+.zenblog.zenblog .zenblog__filter-reset:hover,
+.zenblog.zenblog .zenblog__filter-reset:focus,
+.zenblog.zenblog .zenblog__filter-submit:hover,
+.zenblog.zenblog .zenblog__filter-submit:focus {
+	background-color: transparent;
+	border-color: currentColor;
+	color: inherit;
+}
+
 /* ------------------------------------------------------------------ *
  * Card foot: read more, then the divider, then meta
  * ------------------------------------------------------------------ */

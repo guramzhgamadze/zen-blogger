@@ -553,7 +553,7 @@ class Zen_Blogger_Posts extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'zenblog_filter_typography',
-				'selector' => '{{WRAPPER}} .zenblog__check label, {{WRAPPER}} .zenblog__select, {{WRAPPER}} .zenblog__search-input, {{WRAPPER}} .zenblog__filter-submit, {{WRAPPER}} .zenblog__filter-reset',
+				'selector' => '{{WRAPPER}} .zenblog__check label, {{WRAPPER}} .zenblog__select, {{WRAPPER}} .zenblog__search-input, {{WRAPPER}} .zenblog__filter-submit, {{WRAPPER}} .zenblog__filter-reset, {{WRAPPER}} .zenblog__filter-reset:hover, {{WRAPPER}} .zenblog__filter-reset:focus, {{WRAPPER}} .zenblog__filter-submit:hover, {{WRAPPER}} .zenblog__filter-submit:focus',
 			)
 		);
 
@@ -563,7 +563,7 @@ class Zen_Blogger_Posts extends Widget_Base {
 				'label'     => esc_html__( 'Text Color', 'zen-blogger' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
-					'{{WRAPPER}} .zenblog__check label, {{WRAPPER}} .zenblog__select, {{WRAPPER}} .zenblog__search-input, {{WRAPPER}} .zenblog__filter-submit, {{WRAPPER}} .zenblog__filter-reset' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .zenblog__check label, {{WRAPPER}} .zenblog__select, {{WRAPPER}} .zenblog__search-input, {{WRAPPER}} .zenblog__filter-submit, {{WRAPPER}} .zenblog__filter-reset, {{WRAPPER}} .zenblog__filter-reset:hover, {{WRAPPER}} .zenblog__filter-reset:focus, {{WRAPPER}} .zenblog__filter-submit:hover, {{WRAPPER}} .zenblog__filter-submit:focus' => 'color: {{VALUE}};',
 				),
 			)
 		);
@@ -573,7 +573,7 @@ class Zen_Blogger_Posts extends Widget_Base {
 			array(
 				'name'     => 'zenblog_filter_bg',
 				'types'    => array( 'classic', 'gradient' ),
-				'selector' => '{{WRAPPER}} .zenblog__check label, {{WRAPPER}} .zenblog__select, {{WRAPPER}} .zenblog__search-input, {{WRAPPER}} .zenblog__filter-submit, {{WRAPPER}} .zenblog__filter-reset',
+				'selector' => '{{WRAPPER}} .zenblog__check label, {{WRAPPER}} .zenblog__select, {{WRAPPER}} .zenblog__search-input, {{WRAPPER}} .zenblog__filter-submit, {{WRAPPER}} .zenblog__filter-reset, {{WRAPPER}} .zenblog__filter-reset:hover, {{WRAPPER}} .zenblog__filter-reset:focus, {{WRAPPER}} .zenblog__filter-submit:hover, {{WRAPPER}} .zenblog__filter-submit:focus',
 			)
 		);
 
@@ -603,7 +603,7 @@ class Zen_Blogger_Posts extends Widget_Base {
 			Group_Control_Border::get_type(),
 			array(
 				'name'     => 'zenblog_filter_border',
-				'selector' => '{{WRAPPER}} .zenblog__check label, {{WRAPPER}} .zenblog__select, {{WRAPPER}} .zenblog__search-input, {{WRAPPER}} .zenblog__filter-submit, {{WRAPPER}} .zenblog__filter-reset',
+				'selector' => '{{WRAPPER}} .zenblog__check label, {{WRAPPER}} .zenblog__select, {{WRAPPER}} .zenblog__search-input, {{WRAPPER}} .zenblog__filter-submit, {{WRAPPER}} .zenblog__filter-reset, {{WRAPPER}} .zenblog__filter-reset:hover, {{WRAPPER}} .zenblog__filter-reset:focus, {{WRAPPER}} .zenblog__filter-submit:hover, {{WRAPPER}} .zenblog__filter-submit:focus',
 			)
 		);
 
@@ -614,7 +614,7 @@ class Zen_Blogger_Posts extends Widget_Base {
 				'type'       => Controls_Manager::DIMENSIONS,
 				'size_units' => array( 'px', '%', 'em', 'rem' ),
 				'selectors'  => array(
-					'{{WRAPPER}} .zenblog__check label, {{WRAPPER}} .zenblog__select, {{WRAPPER}} .zenblog__search-input, {{WRAPPER}} .zenblog__filter-submit, {{WRAPPER}} .zenblog__filter-reset' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .zenblog__check label, {{WRAPPER}} .zenblog__select, {{WRAPPER}} .zenblog__search-input, {{WRAPPER}} .zenblog__filter-submit, {{WRAPPER}} .zenblog__filter-reset, {{WRAPPER}} .zenblog__filter-reset:hover, {{WRAPPER}} .zenblog__filter-reset:focus, {{WRAPPER}} .zenblog__filter-submit:hover, {{WRAPPER}} .zenblog__filter-submit:focus' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
 			)
 		);
@@ -626,7 +626,7 @@ class Zen_Blogger_Posts extends Widget_Base {
 				'type'       => Controls_Manager::DIMENSIONS,
 				'size_units' => array( 'px', 'em', 'rem' ),
 				'selectors'  => array(
-					'{{WRAPPER}} .zenblog__check label, {{WRAPPER}} .zenblog__select, {{WRAPPER}} .zenblog__search-input, {{WRAPPER}} .zenblog__filter-submit, {{WRAPPER}} .zenblog__filter-reset' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .zenblog__check label, {{WRAPPER}} .zenblog__select, {{WRAPPER}} .zenblog__search-input, {{WRAPPER}} .zenblog__filter-submit, {{WRAPPER}} .zenblog__filter-reset, {{WRAPPER}} .zenblog__filter-reset:hover, {{WRAPPER}} .zenblog__filter-reset:focus, {{WRAPPER}} .zenblog__filter-submit:hover, {{WRAPPER}} .zenblog__filter-submit:focus' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
 			)
 		);
@@ -635,7 +635,7 @@ class Zen_Blogger_Posts extends Widget_Base {
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'zenblog_filter_shadow',
-				'selector' => '{{WRAPPER}} .zenblog__check label, {{WRAPPER}} .zenblog__select, {{WRAPPER}} .zenblog__search-input, {{WRAPPER}} .zenblog__filter-submit, {{WRAPPER}} .zenblog__filter-reset',
+				'selector' => '{{WRAPPER}} .zenblog__check label, {{WRAPPER}} .zenblog__select, {{WRAPPER}} .zenblog__search-input, {{WRAPPER}} .zenblog__filter-submit, {{WRAPPER}} .zenblog__filter-reset, {{WRAPPER}} .zenblog__filter-reset:hover, {{WRAPPER}} .zenblog__filter-reset:focus, {{WRAPPER}} .zenblog__filter-submit:hover, {{WRAPPER}} .zenblog__filter-submit:focus',
 			)
 		);
 
