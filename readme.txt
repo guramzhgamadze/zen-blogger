@@ -4,7 +4,7 @@ Tags: elementor, carousel, blog, slider, posts
 Requires at least: 6.5
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.8.0
+Stable tag: 1.8.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -116,6 +116,9 @@ Yes. The layout uses logical properties throughout and the carousel direction fo
 6. Style controls for the card, image and read-more button.
 
 == Changelog ==
+
+= 1.8.1 =
+* Changed: the excerpt is a paragraph rather than a div. Text-processing plugins — hyphenation, typography filters, translation — look for `<p>`, and a div quietly opted the excerpt out of every one of them. The theme's paragraph margin is reset with it, so card spacing stays owned by the card.
 
 = 1.8.0 =
 * Changed: with infinite scroll the feed loads itself, so it no longer shows a button telling you to do what it is already doing. A small spinner appears while a page is fetched, and the button returns — visible — once auto-loading reaches its limit and there is genuinely something to press. It stays reachable by Tab throughout, and remains a real link for visitors without JavaScript.

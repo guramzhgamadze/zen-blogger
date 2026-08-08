@@ -253,6 +253,9 @@
 .zenblog__excerpt {
 	min-width: 0;
 	overflow-wrap: anywhere;
+	/* The excerpt is a <p>, so themes apply their paragraph margin to it.
+	   Card spacing is owned by the card's own gap, not by the excerpt. */
+	margin: 0;
 }
 
 .zenblog__more {

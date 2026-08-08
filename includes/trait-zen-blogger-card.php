@@ -3043,7 +3043,10 @@ trait Zen_Blogger_Card_Trait {
 			return;
 		}
 
-		echo '<div class="zenblog__excerpt">' . esc_html( $text ) . '</div>';
+		// A paragraph, not a div: excerpts are prose, and text-processing
+		// plugins (hyphenation, typography filters) target <p>. A div silently
+		// opts the excerpt out of all of them.
+		echo '<p class="zenblog__excerpt">' . esc_html( $text ) . '</p>';
 	}
 
 	/**
