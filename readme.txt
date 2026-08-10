@@ -4,7 +4,7 @@ Tags: elementor, carousel, blog, slider, posts
 Requires at least: 6.5
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.8.2
+Stable tag: 1.8.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -116,6 +116,9 @@ Yes. The layout uses logical properties throughout and the carousel direction fo
 6. Style controls for the card, image and read-more button.
 
 == Changelog ==
+
+= 1.8.3 =
+* Fixed: "Avoid duplicates" stopped working past the first page. It reads a list of what the page has already shown, and that list lives for one request — a Load More or infinite-scroll fetch is a new request, where it starts empty. So page two was drawn from a different result set than page one, and posts could repeat or be skipped between them. The set is now carried across.
 
 = 1.8.2 =
 * Fixed: loading the dynamic tags warned on every page if glob() failed — an unreadable directory or an open_basedir restriction — because the result was iterated without checking it was a list.

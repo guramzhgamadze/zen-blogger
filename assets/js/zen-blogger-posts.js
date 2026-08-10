@@ -221,6 +221,12 @@
 				url.searchParams.set( 'context', JSON.stringify( cfg.context ) );
 			}
 
+			// What the rest of the page already showed, so every fetched page is
+			// computed against the same result set the first one was.
+			if ( cfg.dedupe && cfg.dedupe.length ) {
+				url.searchParams.set( 'dedupe', cfg.dedupe.join( ',' ) );
+			}
+
 			return url.toString();
 		}
 

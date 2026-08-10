@@ -97,6 +97,12 @@ final class Zen_Blogger_Rest {
 						'description'       => 'Identity of the archive being displayed, re-validated against real objects before use.',
 						'sanitize_callback' => 'sanitize_text_field',
 					),
+					'dedupe'     => array(
+						'type'              => 'string',
+						'default'           => '',
+						'description'       => 'Comma-separated IDs already shown by other widgets on the page; narrows the result only.',
+						'sanitize_callback' => 'sanitize_text_field',
+					),
 					'page_url'   => array(
 						'type'              => 'string',
 						'default'           => '',
@@ -220,7 +226,21 @@ final class Zen_Blogger_Rest {
 		// Current Query needs the listing itself put back, not just a post.
 		$restore_query = self::enter_query_context( (string) $request->get_param( 'context' ) );
 
-		$response = $widget->render_ajax_page( $paged, $state, $page_url );
+		/*
+		 * IDs the page has already shown. Client-supplied, but it can only ever
+		 * REMOVE posts from a list that is public anyway — the worst a caller can
+		 * do with it is show itself fewer posts. Capped so it cannot be used to
+		 * build an enormous NOT IN.
+		 */
+		$dedupe = array_slice(
+			array_filter(
+				array_map( 'absint', explode( ',', (string) $request->get_param( 'dedupe' ) ) )
+			),
+			0,
+			500
+		);
+
+		$response = $widget->render_ajax_page( $paged, $state, $page_url, $dedupe );
 
 		$restore_query();
 		$restore();

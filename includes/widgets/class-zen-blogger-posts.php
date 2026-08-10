@@ -1068,6 +1068,18 @@ class Zen_Blogger_Posts extends Widget_Base {
 						// Current Query pages via the archive's own paged var, so
 						// the widget must not also write its private one.
 						'mainPaging' => 'current' === ( isset( $settings['zenblog_source'] ) ? $settings['zenblog_source'] : '' ),
+
+						/*
+						 * Posts other widgets on this page already showed. Avoid
+						 * Duplicates reads a per-request static, and a background
+						 * request is a new process where that static is empty — so
+						 * without carrying the set across, page two is computed from
+						 * a different result set than page one and posts get
+						 * repeated or skipped between them.
+						 */
+						'dedupe'     => ( 'yes' === ( isset( $settings['zenblog_avoid_duplicates'] ) ? $settings['zenblog_avoid_duplicates'] : '' ) )
+							? array_values( array_map( 'intval', Zen_Blogger_Query::rendered() ) )
+							: array(),
 						'elementId'  => $this->get_id(),
 						'nav'        => $nav,
 						'ajax'       => $this->ajax_enabled( $settings ),
@@ -1402,12 +1414,20 @@ class Zen_Blogger_Posts extends Widget_Base {
 	 * @param int    $paged    Page number.
 	 * @param array  $state    Validated filter state.
 	 * @param string $page_url URL the widget's page lives at.
+	 * @param int[]  $dedupe   IDs other widgets on the page already showed.
 	 * @return array
 	 */
-	public function render_ajax_page( $paged, array $state, $page_url = '' ) {
+	public function render_ajax_page( $paged, array $state, $page_url = '', array $dedupe = array() ) {
 		$settings           = $this->get_settings_for_display();
 		$this->nav_base_url = $page_url ? $page_url : '';
-		$query              = $this->run_query( $settings, $paged, $state );
+
+		// Re-seed what the first page had already excluded, so this page indexes
+		// into the same result set rather than a fresh one.
+		if ( $dedupe ) {
+			Zen_Blogger_Query::mark_rendered( $dedupe );
+		}
+
+		$query = $this->run_query( $settings, $paged, $state );
 
 		ob_start();
 
