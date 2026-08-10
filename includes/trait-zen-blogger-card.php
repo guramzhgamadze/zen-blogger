@@ -774,7 +774,7 @@ trait Zen_Blogger_Card_Trait {
 					'menu_order'     => esc_html__( 'Menu order', 'zen-blogger' ),
 					'comment_count'  => esc_html__( 'Comment count', 'zen-blogger' ),
 					'rand'           => esc_html__( 'Random', 'zen-blogger' ),
-					'meta_value'     => esc_html__( 'Custom field (text)', 'zen-blogger' ),
+					'meta_value'     => esc_html__( 'Custom field (text)', 'zen-blogger' ), // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- A label in a SELECT control, not a query argument; the sniff matches the array key.
 					'meta_value_num' => esc_html__( 'Custom field (number)', 'zen-blogger' ),
 				),
 				'condition' => array( 'zenblog_source!' => array( 'manual', 'current' ) ),
@@ -848,7 +848,7 @@ trait Zen_Blogger_Card_Trait {
 					'ignore'  => esc_html__( 'Treat like any other post', 'zen-blogger' ),
 					'first'   => esc_html__( 'Show first', 'zen-blogger' ),
 					'only'    => esc_html__( 'Only sticky posts', 'zen-blogger' ),
-					'exclude' => esc_html__( 'Exclude sticky posts', 'zen-blogger' ),
+					'exclude' => esc_html__( 'Exclude sticky posts', 'zen-blogger' ), // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude -- A label in a SELECT control, not a get_posts() argument; the sniff matches the array key.
 				),
 				'condition' => array( 'zenblog_source' => array( 'latest', 'related' ) ),
 				'separator' => 'before',

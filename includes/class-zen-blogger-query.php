@@ -107,8 +107,10 @@ final class Zen_Blogger_Query {
 			$args['post__in']       = $ids;
 			$args['orderby']        = 'post__in';
 			$args['posts_per_page'] = count( $ids );
-			unset( $args['order'] );
 
+			// No unset( $args['order'] ) here: this branch returns before
+			// apply_order() runs, so nothing has ever set it — and 'order' is
+			// ignored for a post__in ordering regardless.
 			return $args;
 		}
 

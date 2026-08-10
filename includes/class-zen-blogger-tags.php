@@ -42,7 +42,16 @@ final class Zen_Blogger_Tags {
 	private static function load() {
 		require_once ZENBLOG_PATH . 'includes/tags/trait-zen-blogger-tag-shared.php';
 
-		foreach ( glob( ZENBLOG_PATH . 'includes/tags/class-zen-blogger-tag-*.php' ) as $file ) {
+		// glob() returns false on failure — an unreadable directory, or open_basedir
+		// refusing the path — and foreach over false is a warning on every page
+		// load, on a host where the tags were never going to register anyway.
+		$files = glob( ZENBLOG_PATH . 'includes/tags/class-zen-blogger-tag-*.php' );
+
+		if ( ! is_array( $files ) ) {
+			return;
+		}
+
+		foreach ( $files as $file ) {
 			require_once $file;
 		}
 	}

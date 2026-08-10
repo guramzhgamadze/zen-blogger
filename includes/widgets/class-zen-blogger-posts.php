@@ -1044,7 +1044,7 @@ class Zen_Blogger_Posts extends Widget_Base {
 				'id'                 => $uid,
 				'data-zenblog-posts' => wp_json_encode(
 					array(
-						'restUrl'   => rest_url( Zen_Blogger_Rest::NS . '/posts' ),
+						'restUrl'    => rest_url( Zen_Blogger_Rest::NS . '/posts' ),
 
 						/*
 						 * The document the widget was PLACED in, which on a Theme
@@ -1052,31 +1052,31 @@ class Zen_Blogger_Posts extends Widget_Base {
 						 * document_id() — sending the queried ID here made every
 						 * AJAX page 404 on every theme template.
 						 */
-						'postId'    => $this->document_id(),
-						'contextId' => is_singular() ? (int) get_queried_object_id() : 0,
-						'pageUrl'   => $this->page_url(),
+						'postId'     => $this->document_id(),
+						'contextId'  => is_singular() ? (int) get_queried_object_id() : 0,
+						'pageUrl'    => $this->page_url(),
 
 						/*
 						 * Only sent for Current Query, and only as an identity the
 						 * endpoint re-validates against real objects — never as
 						 * query arguments.
 						 */
-						'context'   => ( 'current' === ( isset( $settings['zenblog_source'] ) ? $settings['zenblog_source'] : '' ) )
+						'context'    => ( 'current' === ( isset( $settings['zenblog_source'] ) ? $settings['zenblog_source'] : '' ) )
 							? $this->query_context()
 							: null,
 
 						// Current Query pages via the archive's own paged var, so
 						// the widget must not also write its private one.
 						'mainPaging' => 'current' === ( isset( $settings['zenblog_source'] ) ? $settings['zenblog_source'] : '' ),
-						'elementId' => $this->get_id(),
-						'nav'       => $nav,
-						'ajax'      => $this->ajax_enabled( $settings ),
-						'paged'     => $paged,
-						'maxPages'  => $maxpage,
-						'total'     => $total,
-						'state'     => $state,
-						'perPage'   => $this->per_page( $settings ),
-						'autoMax'   => isset( $settings['zenblog_infinite_max'] ) ? max( 1, (int) $settings['zenblog_infinite_max'] ) : 5,
+						'elementId'  => $this->get_id(),
+						'nav'        => $nav,
+						'ajax'       => $this->ajax_enabled( $settings ),
+						'paged'      => $paged,
+						'maxPages'   => $maxpage,
+						'total'      => $total,
+						'state'      => $state,
+						'perPage'    => $this->per_page( $settings ),
+						'autoMax'    => isset( $settings['zenblog_infinite_max'] ) ? max( 1, (int) $settings['zenblog_infinite_max'] ) : 5,
 					)
 				),
 			)

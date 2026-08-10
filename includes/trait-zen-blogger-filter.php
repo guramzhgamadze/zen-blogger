@@ -546,12 +546,14 @@ trait Zen_Blogger_Filter_Trait {
 	 */
 	public function parse_filter_query( $query ) {
 		$parsed = array();
+		// parse_str() always writes an array into its second argument, so the
+		// is_array() guard that used to sit below could never fail.
 		parse_str( (string) $query, $parsed );
 
 		return $this->filter_state(
 			$this->get_settings_for_display(),
 			'zenblog-' . $this->get_id(),
-			is_array( $parsed ) ? $parsed : array()
+			$parsed
 		);
 	}
 
@@ -601,7 +603,7 @@ trait Zen_Blogger_Filter_Trait {
 			)
 		);
 
-		$style = isset( $settings['zenblog_filter_style'] ) ? $settings['zenblog_filter_style'] : 'links';
+		$style      = isset( $settings['zenblog_filter_style'] ) ? $settings['zenblog_filter_style'] : 'links';
 		$has_search = 'yes' === ( isset( $settings['zenblog_search'] ) ? $settings['zenblog_search'] : '' );
 		$has_sort   = 'yes' === ( isset( $settings['zenblog_sort'] ) ? $settings['zenblog_sort'] : '' );
 		$show_clear = 'yes' === ( isset( $settings['zenblog_filter_clear'] ) ? $settings['zenblog_filter_clear'] : '' );

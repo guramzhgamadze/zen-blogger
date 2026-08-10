@@ -4,7 +4,7 @@ Tags: elementor, carousel, blog, slider, posts
 Requires at least: 6.5
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.8.1
+Stable tag: 1.8.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -116,6 +116,11 @@ Yes. The layout uses logical properties throughout and the carousel direction fo
 6. Style controls for the card, image and read-more button.
 
 == Changelog ==
+
+= 1.8.2 =
+* Fixed: loading the dynamic tags warned on every page if glob() failed — an unreadable directory or an open_basedir restriction — because the result was iterated without checking it was a list.
+* Fixed: the REST filter sanitiser could return null rather than a string if the regex engine gave up, so a value that was neither cleaned nor a string could travel on. A failure now drops the filter.
+* Removed dead code: an unset() of an array key that was never set, and an is_array() guard on a value that is always an array.
 
 = 1.8.1 =
 * Changed: the excerpt is a paragraph rather than a div. Text-processing plugins — hyphenation, typography filters, translation — look for `<p>`, and a div quietly opted the excerpt out of every one of them. The theme's paragraph margin is reset with it, so card spacing stays owned by the card.

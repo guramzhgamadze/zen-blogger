@@ -127,7 +127,13 @@ final class Zen_Blogger_Rest {
 		// server do a lot of parsing work.
 		$value = substr( $value, 0, 2000 );
 
-		return preg_replace( '/[^A-Za-z0-9_\-\[\]=&%.,+~]/', '', $value );
+		$clean = preg_replace( '/[^A-Za-z0-9_\-\[\]=&%.,+~]/', '', $value );
+
+		// preg_replace() returns null if the engine fails — on a backtrack limit,
+		// say. A sanitiser that hands back null instead of a string is how a
+		// "cleaned" value ends up being neither cleaned nor a string, so failure
+		// drops the filter entirely rather than passing anything through.
+		return is_string( $clean ) ? $clean : '';
 	}
 
 	/**
