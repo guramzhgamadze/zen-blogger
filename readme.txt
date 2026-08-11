@@ -4,7 +4,7 @@ Tags: elementor, carousel, blog, slider, posts
 Requires at least: 6.5
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.8.3
+Stable tag: 1.8.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -116,6 +116,9 @@ Yes. The layout uses logical properties throughout and the carousel direction fo
 6. Style controls for the card, image and read-more button.
 
 == Changelog ==
+
+= 1.8.4 =
+* Fixed: a widget nested inside a container that does not keep its children in a plain list could not be found by the background request, so pagination and filtering failed on exactly those layouts. Elementor's own recursive search is now used, which descends through the filter such containers use to expose their children.
 
 = 1.8.3 =
 * Fixed: "Avoid duplicates" stopped working past the first page. It reads a list of what the page has already shown, and that list lives for one request — a Load More or infinite-scroll fetch is a new request, where it starts empty. So page two was drawn from a different result set than page one, and posts could repeat or be skipped between them. The set is now carried across.

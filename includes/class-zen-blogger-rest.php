@@ -431,11 +431,36 @@ final class Zen_Blogger_Rest {
 			return null;
 		}
 
-		return self::walk( $data, $element_id );
+		/*
+		 * Elementor's own recursive search rather than a hand-rolled one. It is
+		 * not only shorter: it descends through the
+		 * elementor/utils/find_element_recursive/inner_elements filter, which is
+		 * how element types that do not keep their children in a plain
+		 * 'elements' key expose them. Walking that key directly meant a widget
+		 * nested inside such a container could not be found at all, and the only
+		 * symptom would have been AJAX failing on exactly those layouts.
+		 */
+		$node = class_exists( '\Elementor\Utils' ) && method_exists( '\Elementor\Utils', 'find_element_recursive' )
+			? \Elementor\Utils::find_element_recursive( $data, $element_id )
+			: self::walk( $data, $element_id );
+
+		if ( ! is_array( $node ) ) {
+			return null;
+		}
+
+		// Found by id — now make sure it is one of ours before handing over its
+		// settings, or any element id on the page would be a valid target.
+		if ( ! isset( $node['widgetType'] ) || 'zen-blogger-posts' !== $node['widgetType'] ) {
+			return null;
+		}
+
+		return $node;
 	}
 
 	/**
 	 * Depth-first search for an element by ID.
+	 *
+	 * Fallback for an Elementor without find_element_recursive().
 	 *
 	 * @param array  $nodes      Element nodes.
 	 * @param string $element_id Target ID.
@@ -448,10 +473,7 @@ final class Zen_Blogger_Rest {
 			}
 
 			if ( isset( $node['id'] ) && (string) $node['id'] === $element_id ) {
-				if ( isset( $node['widgetType'] ) && 'zen-blogger-posts' === $node['widgetType'] ) {
-					return $node;
-				}
-				return null;
+				return $node;
 			}
 
 			if ( ! empty( $node['elements'] ) && is_array( $node['elements'] ) ) {
