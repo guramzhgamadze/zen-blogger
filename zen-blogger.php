@@ -3,12 +3,12 @@
  * Plugin Name:       Zen Blogger
  * Plugin URI:        https://wordpress.org/plugins/zen-blogger/
  * Description:       An accessible, fast blog post carousel widget for Elementor. Six skins, a deep query builder, Swiper-powered motion, WCAG 2.2 AA controls and zero extra libraries.
- * Version:           1.8.4
+ * Version:           1.8.5
  * Requires at least: 6.5
  * Requires PHP:      7.4
  * Requires Plugins:  elementor
  * Author:            Guram Zgamadze
- * Author URI:        https://profiles.wordpress.org/guramzgamadze/
+ * Author URI:        https://profiles.wordpress.org/guramzhgamadze/
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       zen-blogger
@@ -19,7 +19,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'ZENBLOG_VERSION', '1.8.4' );
+define( 'ZENBLOG_VERSION', '1.8.5' );
 define( 'ZENBLOG_FILE', __FILE__ );
 define( 'ZENBLOG_PATH', plugin_dir_path( __FILE__ ) );
 define( 'ZENBLOG_URL', plugin_dir_url( __FILE__ ) );

@@ -1,38 +1,57 @@
 === Zen Blogger ===
-Contributors: guramzgamadze
+Contributors: guramzhgamadze
 Tags: elementor, carousel, blog, slider, posts
 Requires at least: 6.5
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.8.4
+Stable tag: 1.8.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Accessible, fast blog widgets for Elementor. A carousel and a post grid, six skins, a deep query builder, and no second slider library.
+Accessible blog carousel and post grid widgets for Elementor, with six skins, a deep query builder and a search-and-filter bar.
 
 == Description ==
 
-Zen Blogger adds two widgets to Elementor: **Blog Carousel** and **Posts**. Both draw the same card and share the same query builder, so a layout you design once works either way. They are built around three things most post widgets get wrong.
+Zen Blogger adds two widgets to Elementor: **Blog Carousel** and **Posts**. Both draw the same card and share the same query builder, so a layout you design once works either way.
 
-**It is accessible by default.** Turning autoplay on adds a play/pause button — you can move it or make it appear on hover, but you cannot delete it, because moving content with no way to stop it fails WCAG 2.2.2. Arrows and the play/pause control are real buttons at a 44px target. Slides carry proper carousel semantics, keyboard control is on by default, and visitors whose system asks for reduced motion get no autoplay and instant transitions.
+= Accessibility =
 
-**It does not ship a second slider library.** The carousel runs on the Swiper build Elementor already loads. Nothing is enqueued on pages that do not use the widget. Images in the first visible row load eagerly with high fetch priority and everything after them loads lazily, and the image box reserves its aspect ratio up front so the carousel does not shift your layout while it loads. If the script never runs, the markup stays a scroll-snapping row instead of collapsing.
+Turning autoplay on adds a play/pause button — you can move it or make it appear on hover, but you cannot delete it, because moving content with no way to stop it fails WCAG 2.2.2. Arrows and the play/pause control are real buttons at a 44px target. Slides carry proper carousel semantics, keyboard control is on by default, and visitors whose system asks for reduced motion get no autoplay and instant transitions.
 
-**The query builder is not an afterthought.** Filter by post type, taxonomy (include *and* exclude, combined with AND or OR), author, date range, and custom field ordering. Show posts related to the post being viewed, hand-pick them, or reuse the archive's own query. Exclude the current post, skip posts already shown by another carousel on the page, or require a featured image.
+= Performance =
+
+The carousel runs on the Swiper library Elementor already loads, so no additional slider script is added to the page. Nothing is enqueued on pages that do not use the widget. Images in the first visible row load eagerly with high fetch priority and everything after them loads lazily, and the image box reserves its aspect ratio up front so the carousel does not shift your layout while it loads. If the script never runs, the markup stays a scroll-snapping row instead of collapsing.
+
+= Query builder =
+
+Filter by post type, taxonomy (include *and* exclude, combined with AND or OR), author, date range, and custom field ordering. Show posts related to the post being viewed, hand-pick them, or reuse the archive's own query. Exclude the current post, skip posts already shown by another carousel on the page, or require a featured image.
 
 = The Posts widget =
 
 Grid, masonry, list, or a feature layout where the first post spans wider. Pagination is page numbers, previous/next, a Load More button, or infinite scroll — and every one of them starts life as a real link, so the widget works with JavaScript disabled and every page stays crawlable.
 
-What sets it apart is what happens *after* an AJAX update, which is where most post grids quietly fail:
+When a page of results is fetched in the background:
 
-* The new result count is announced politely — "Showing 6 of 8 posts" — instead of the page silently changing.
+* The new result count is announced politely — "Showing 6 of 8 posts".
 * The grid is marked `aria-busy` while it loads.
-* Focus moves to the first newly loaded post, so keyboard users carry on from the new content rather than being dropped at the top of the page. On an auto-triggered infinite load focus is deliberately *not* taken, because nobody asked for it.
-* Infinite scroll auto-loads a set number of pages before the button must be pressed again. An endless feed makes everything below it unreachable; capping the run keeps the footer in reach.
+* Focus moves to the first newly loaded post, so keyboard users continue from the new content. On an automatic infinite-scroll load, focus is deliberately left alone.
+* Infinite scroll loads a set number of pages automatically before the button must be pressed again, so the footer stays reachable.
 * The address bar keeps up with filters, so Back works and a filtered view can be shared.
 
-The optional filter bar is built from real term-archive links and reflects the current selection with `aria-current`.
+The optional search-and-filter bar is a real form. It offers only the terms present in the posts the widget is showing, and reflects the current selection with `aria-current`.
+
+= Setting up a widget =
+
+1. Edit a page, or a Theme Builder template, with Elementor.
+2. Search the widget panel for "Zen" and drag **Blog Carousel** or **Posts** onto the canvas.
+3. **Content -> Query** picks what to show: the Source (latest posts, related to the post being viewed, hand-picked, or the current page's own query), then post type, taxonomy include and exclude, author, date range and ordering.
+4. **Content -> Layout** picks how a card looks: the Skin, and for the Posts widget the layout (grid, masonry, list or feature) and the number of columns per device.
+5. **Content -> Pagination**, on the Posts widget, offers page numbers, previous/next, a Load More button, infinite scroll, or none.
+6. **Content -> Search & Filter**, on the Posts widget, switches on the filter bar. Choose which taxonomies it offers, and whether to include a search box and a sort control.
+7. **Content -> Accessibility**, on the carousel, controls autoplay, where the play/pause button sits and when it is visible, and whether reduced-motion settings are respected.
+8. The **Style** tab has its own section for the card, image, terms, title, meta, excerpt, read more, filter bar and pagination.
+
+Every text label the widget renders is an editable field, and every colour, font, size, spacing, border, radius and shadow is an Elementor control.
 
 = Skins =
 
@@ -59,7 +78,7 @@ The carousel also describes itself as a schema.org **ItemList** in JSON-LD, eith
 
 = Works with Zen GEO =
 
-If [Zen GEO](https://wordpress.org/plugins/zen-geo/) is installed, the two plugins cooperate rather than compete:
+If [Zen GEO](https://wordpress.org/plugins/zen-geo/) is installed, the two plugins share their structured data:
 
 * Zen GEO prints its page graph in `<head>`; Zen Blogger prints its list where the widget renders. They never overwrite each other.
 * Zen Blogger uses **Zen GEO's own node identity** (`permalink#article`), so a post described in a carousel and the same post described by Zen GEO on its own page resolve to one node instead of two competing descriptions of the same URL.
@@ -82,7 +101,8 @@ Neither plugin requires the other.
 1. Install and activate Elementor.
 2. Upload the `zen-blogger` folder to `/wp-content/plugins/`, or install the zip through Plugins → Add New.
 3. Activate Zen Blogger.
-4. Edit a page with Elementor and drag **Blog Carousel** or **Posts** from the *Zen Blogger* category onto the canvas.
+4. Edit a page with Elementor, search the widget panel for "Zen", and drag **Blog Carousel** or **Posts** from the *Zen Blogger* category onto the canvas.
+5. See "Setting up a widget" above for what each panel does.
 
 == Frequently Asked Questions ==
 
@@ -116,6 +136,10 @@ Yes. The layout uses logical properties throughout and the carousel direction fo
 6. Style controls for the card, image and read-more button.
 
 == Changelog ==
+
+= 1.8.5 =
+* Corrected the Contributors username and the author profile link, which were both missing a letter.
+* Rewrote the description to describe this plugin on its own terms, without comparisons to other post widgets, and added a step-by-step guide to configuring a widget.
 
 = 1.8.4 =
 * Fixed: a widget nested inside a container that does not keep its children in a plain list could not be found by the background request, so pagination and filtering failed on exactly those layouts. Elementor's own recursive search is now used, which descends through the filter such containers use to expose their children.
