@@ -2,9 +2,9 @@
 Contributors: guramzhgamadze
 Tags: elementor, carousel, blog, slider, posts
 Requires at least: 6.5
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.8.5
+Stable tag: 1.8.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -137,6 +137,12 @@ Yes. The layout uses logical properties throughout and the carousel direction fo
 7. The Style panel: card, image, badge and term controls, each with Normal and Hover states.
 
 == Changelog ==
+
+= 1.8.6 =
+* Tested against WordPress 7.1.
+* Fixed: on a hierarchical taxonomy, the count beside a parent term ignored everything filed under its children. Selecting the term returns those posts, so a parent could read "1" next to a button that produced ten results.
+* Fixed: a term matching every post the widget is showing is no longer offered. Selecting it returned exactly what "All" already showed, which on a category archive meant a button that could not change anything.
+* Fixed: two strings carried a different translator comment in each place they were used. Gettext merges those into a single entry, so translators were shown two contradictory notes for the same string.
 
 = 1.8.5 =
 * Corrected the Contributors username and the author profile link, which were both missing a letter.

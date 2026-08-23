@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-19T11:34:57+00:00\n"
+"POT-Creation-Date: 2026-08-23T11:44:21+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: zen-blogger\n"
@@ -149,7 +149,6 @@ msgstr ""
 msgid "Last modified"
 msgstr ""
 
-#. translators: %s: human-readable time difference.
 #. translators: %s: human-readable time difference, e.g. "2 days".
 #: includes/tags/class-zen-blogger-tag-date.php:78
 #: includes/trait-zen-blogger-card.php:2957
@@ -182,7 +181,6 @@ msgstr ""
 msgid "Reading Time"
 msgstr ""
 
-#. translators: %s: estimated reading time in minutes.
 #. translators: %s: number of minutes.
 #: includes/tags/class-zen-blogger-tag-reading-time.php:73
 #: includes/trait-zen-blogger-card.php:373

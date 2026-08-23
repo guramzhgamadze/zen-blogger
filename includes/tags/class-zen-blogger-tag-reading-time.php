@@ -69,7 +69,7 @@ class Zen_Blogger_Tag_Reading_Time extends \Elementor\Core\DynamicTags\Tag {
 
 		echo esc_html(
 			sprintf(
-				/* translators: %s: estimated reading time in minutes. */
+				/* translators: %s: number of minutes. */
 				_n( '%s min read', '%s min read', $minutes, 'zen-blogger' ),
 				number_format_i18n( $minutes )
 			)

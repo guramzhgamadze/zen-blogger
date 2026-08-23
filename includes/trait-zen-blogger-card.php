@@ -2906,7 +2906,7 @@ trait Zen_Blogger_Card_Trait {
 						$settings,
 						'zenblog_reading_time_text',
 						$minutes,
-						/* translators: %s: estimated reading time in minutes. */
+						/* translators: %s: number of minutes. */
 						_n( '%s min read', '%s min read', $minutes, 'zen-blogger' )
 					)
 				) . '</span>';

@@ -74,7 +74,7 @@ class Zen_Blogger_Tag_Date extends \Elementor\Core\DynamicTags\Tag {
 		if ( 'human' === $format ) {
 			echo esc_html(
 				sprintf(
-					/* translators: %s: human-readable time difference. */
+					/* translators: %s: human-readable time difference, e.g. "2 days". */
 					__( '%s ago', 'zen-blogger' ),
 					human_time_diff( (int) get_post_time( 'U', true, $id ), time() )
 				)

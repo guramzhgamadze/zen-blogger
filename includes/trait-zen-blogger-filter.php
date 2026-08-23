@@ -598,7 +598,9 @@ trait Zen_Blogger_Filter_Trait {
 			array_filter(
 				$taxonomies,
 				function ( $taxonomy ) use ( $settings ) {
-					return count( $this->scoped_terms( $settings, $taxonomy ) ) > 1;
+					// Any term still standing narrows the set, so even one of them
+					// is a real choice against "All".
+					return count( $this->scoped_terms( $settings, $taxonomy ) ) > 0;
 				}
 			)
 		);
@@ -893,14 +895,64 @@ trait Zen_Blogger_Filter_Trait {
 				return array();
 			}
 
-			// One row per post/term pairing, so this counts posts, not terms.
+			/*
+			 * A post counts towards its own terms AND their ancestors, because
+			 * that is what selecting the term actually returns: WP_Tax_Query
+			 * includes children unless told otherwise. Counting only direct
+			 * assignments made a parent read "1" next to a button that produces
+			 * ten results.
+			 *
+			 * Gathered per post first, so a post filed under both a parent and
+			 * its child still counts once towards the parent.
+			 */
+			$hierarchical = is_taxonomy_hierarchical( $taxonomy );
+			$per_post     = array();
+
 			foreach ( $objects as $object ) {
 				$id = (int) $object->term_id;
 
-				$tally[ $id ] = isset( $tally[ $id ] ) ? $tally[ $id ] + 1 : 1;
+				// object_id is added by wp_get_object_terms() for the
+				// all_with_object_id fields mode; it is not declared on WP_Term.
+				// Without the guard a missing one would file every post under 0
+				// and collapse the whole tally into a single bogus count.
+				$post = isset( $object->object_id ) ? (int) $object->object_id : 0;
+
+				if ( ! $post ) {
+					continue;
+				}
+
+				$per_post[ $post ][ $id ] = true;
+
+				if ( $hierarchical ) {
+					foreach ( get_ancestors( $id, $taxonomy, 'taxonomy' ) as $ancestor ) {
+						$per_post[ $post ][ (int) $ancestor ] = true;
+					}
+				}
 
 				if ( ! isset( $found[ $id ] ) ) {
 					$found[ $id ] = $object;
+				}
+			}
+
+			foreach ( $per_post as $term_ids ) {
+				foreach ( array_keys( $term_ids ) as $id ) {
+					$tally[ $id ] = isset( $tally[ $id ] ) ? $tally[ $id ] + 1 : 1;
+				}
+			}
+
+			// An ancestor may hold nothing directly and still be worth offering,
+			// so it will not have come back from wp_get_object_terms().
+			foreach ( array_keys( $tally ) as $id ) {
+				if ( isset( $found[ $id ] ) ) {
+					continue;
+				}
+
+				$term = get_term( $id, $taxonomy );
+
+				if ( $term instanceof WP_Term ) {
+					$found[ $id ] = $term;
+				} else {
+					unset( $tally[ $id ] );
 				}
 			}
 		}
@@ -922,6 +974,22 @@ trait Zen_Blogger_Filter_Trait {
 						$found[ (int) $term->term_id ] = $term;
 						$tally[ (int) $term->term_id ] = 0;
 					}
+				}
+			}
+		}
+
+		/*
+		 * A term that matches everything in scope is not a filter — selecting it
+		 * returns exactly what "All" already shows. That is what a category
+		 * archive looks like from inside, and now also what an ancestor looks
+		 * like when every post in scope sits under it.
+		 */
+		$total = count( $ids );
+
+		if ( $total > 0 ) {
+			foreach ( array_keys( $tally ) as $id ) {
+				if ( $tally[ $id ] >= $total && ! $show_empty ) {
+					unset( $tally[ $id ], $found[ $id ] );
 				}
 			}
 		}
