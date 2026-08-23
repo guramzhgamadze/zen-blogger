@@ -1,0 +1,1804 @@
+# Copyright (C) 2026 Guram Zgamadze
+# This file is distributed under the GPL-2.0-or-later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Zen Blogger 1.8.5\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/zen-blogger\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-08-19T11:34:57+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: zen-blogger\n"
+
+#. Plugin Name of the plugin
+#: zen-blogger.php
+#: includes/class-zen-blogger-tags.php:75
+#: includes/class-zen-blogger.php:66
+msgid "Zen Blogger"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: zen-blogger.php
+msgid "https://wordpress.org/plugins/zen-blogger/"
+msgstr ""
+
+#. Description of the plugin
+#: zen-blogger.php
+msgid "An accessible, fast blog post carousel widget for Elementor. Six skins, a deep query builder, Swiper-powered motion, WCAG 2.2 AA controls and zero extra libraries."
+msgstr ""
+
+#. Author of the plugin
+#: zen-blogger.php
+msgid "Guram Zgamadze"
+msgstr ""
+
+#. Author URI of the plugin
+#: zen-blogger.php
+msgid "https://profiles.wordpress.org/guramzhgamadze/"
+msgstr ""
+
+#: includes/class-zen-blogger-assets.php:98
+#: includes/widgets/class-zen-blogger-carousel.php:1116
+msgid "Previous slide"
+msgstr ""
+
+#: includes/class-zen-blogger-assets.php:99
+#: includes/widgets/class-zen-blogger-carousel.php:1120
+msgid "Next slide"
+msgstr ""
+
+#: includes/class-zen-blogger-assets.php:100
+msgid "This is the first slide"
+msgstr ""
+
+#: includes/class-zen-blogger-assets.php:101
+msgid "This is the last slide"
+msgstr ""
+
+#: includes/class-zen-blogger-assets.php:102
+msgid "Go to slide {{index}}"
+msgstr ""
+
+#: includes/class-zen-blogger-assets.php:103
+msgid "Slide {{index}} of {{slidesLength}}"
+msgstr ""
+
+#: includes/class-zen-blogger-assets.php:104
+msgid "carousel"
+msgstr ""
+
+#: includes/class-zen-blogger-assets.php:105
+#: includes/widgets/class-zen-blogger-carousel.php:1187
+msgid "slide"
+msgstr ""
+
+#: includes/class-zen-blogger-assets.php:106
+msgid "Start automatic slide show"
+msgstr ""
+
+#: includes/class-zen-blogger-assets.php:107
+#: includes/widgets/class-zen-blogger-carousel.php:1143
+msgid "Stop automatic slide show"
+msgstr ""
+
+#: includes/class-zen-blogger-assets.php:108
+msgid "Could not load posts. Please try again."
+msgstr ""
+
+#: includes/class-zen-blogger-rest.php:165
+msgid "Content not found."
+msgstr ""
+
+#: includes/class-zen-blogger-rest.php:169
+msgid "Content not available."
+msgstr ""
+
+#: includes/class-zen-blogger-rest.php:175
+msgid "Widget not found on this page."
+msgstr ""
+
+#: includes/class-zen-blogger-rest.php:179
+msgid "Elementor is not available."
+msgstr ""
+
+#: includes/class-zen-blogger-rest.php:193
+msgid "Unsupported widget."
+msgstr ""
+
+#: includes/tags/class-zen-blogger-tag-author.php:32
+msgid "Post Author"
+msgstr ""
+
+#: includes/tags/class-zen-blogger-tag-comments.php:32
+msgid "Comment Count"
+msgstr ""
+
+#. translators: %s: number of comments.
+#: includes/tags/class-zen-blogger-tag-comments.php:55
+#: includes/trait-zen-blogger-card.php:2897
+#, php-format
+msgid "%s comment"
+msgid_plural "%s comments"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/tags/class-zen-blogger-tag-date.php:32
+msgid "Post Date"
+msgstr ""
+
+#: includes/tags/class-zen-blogger-tag-date.php:53
+msgid "Format"
+msgstr ""
+
+#: includes/tags/class-zen-blogger-tag-date.php:57
+#: includes/trait-zen-blogger-card.php:342
+msgid "Site default"
+msgstr ""
+
+#: includes/tags/class-zen-blogger-tag-date.php:58
+#: includes/trait-zen-blogger-card.php:343
+msgid "Relative (2 days ago)"
+msgstr ""
+
+#: includes/tags/class-zen-blogger-tag-date.php:59
+#: includes/trait-zen-blogger-card.php:772
+msgid "Last modified"
+msgstr ""
+
+#. translators: %s: human-readable time difference.
+#. translators: %s: human-readable time difference, e.g. "2 days".
+#: includes/tags/class-zen-blogger-tag-date.php:78
+#: includes/trait-zen-blogger-card.php:2957
+#, php-format
+msgid "%s ago"
+msgstr ""
+
+#: includes/tags/class-zen-blogger-tag-excerpt.php:32
+msgid "Post Excerpt"
+msgstr ""
+
+#: includes/tags/class-zen-blogger-tag-excerpt.php:53
+msgid "Word Limit"
+msgstr ""
+
+#: includes/tags/class-zen-blogger-tag-image.php:36
+#: includes/trait-zen-blogger-card.php:124
+msgid "Featured Image"
+msgstr ""
+
+#: includes/tags/class-zen-blogger-tag-image.php:57
+msgid "Fallback"
+msgstr ""
+
+#: includes/tags/class-zen-blogger-tag-image.php:58
+msgid "Used only when the post has no featured image. Leave empty to render nothing."
+msgstr ""
+
+#: includes/tags/class-zen-blogger-tag-reading-time.php:32
+msgid "Reading Time"
+msgstr ""
+
+#. translators: %s: estimated reading time in minutes.
+#. translators: %s: number of minutes.
+#: includes/tags/class-zen-blogger-tag-reading-time.php:73
+#: includes/trait-zen-blogger-card.php:373
+#: includes/trait-zen-blogger-card.php:2910
+#, php-format
+msgid "%s min read"
+msgid_plural "%s min read"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/tags/class-zen-blogger-tag-terms.php:32
+msgid "Post Terms"
+msgstr ""
+
+#: includes/tags/class-zen-blogger-tag-terms.php:59
+#: includes/trait-zen-blogger-card.php:182
+msgid "Taxonomy"
+msgstr ""
+
+#: includes/tags/class-zen-blogger-tag-terms.php:69
+#: includes/trait-zen-blogger-card.php:401
+msgid "Separator"
+msgstr ""
+
+#: includes/tags/class-zen-blogger-tag-terms.php:78
+#: includes/trait-zen-blogger-card.php:193
+msgid "Max Terms"
+msgstr ""
+
+#: includes/tags/class-zen-blogger-tag-title.php:32
+msgid "Post Title"
+msgstr ""
+
+#: includes/tags/class-zen-blogger-tag-url.php:32
+msgid "Post URL"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:55
+#: includes/widgets/class-zen-blogger-posts.php:158
+msgid "Layout"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:63
+msgid "Skin"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:67
+msgid "Classic — image above text"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:68
+msgid "Overlay — text on the image"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:69
+msgid "Overlap — card lifted over the image"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:70
+msgid "Side by side"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:71
+msgid "Minimal — no image"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:72
+msgid "Editorial — oversized numbers"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:73
+msgid "Elementor template — design your own card"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:81
+msgid "Card Template"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:82
+msgid "Any saved Elementor template. It is rendered once per post, with the post in context, so Dynamic Tags inside it resolve to that post. No Elementor Pro required."
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:95
+msgid "Build the card under Templates → Saved Templates, using Dynamic Tags for the title, image, excerpt and link. The Style controls below do not apply to a template card — the template carries its own design."
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:104
+msgid "Image Position"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:109
+msgid "Start"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:113
+msgid "End"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:148
+msgid "Fallback Image"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:149
+msgid "Shown only for posts with no featured image. Leave empty to render no image at all."
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:161
+msgid "Readability Scrim"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:162
+msgid "Darkens the bottom of the image so text stays legible over a light photo. Switch it off to take full control with the Content Background style control."
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:172
+msgid "Categories / Terms"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:205
+msgid "Terms Position"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:209
+msgid "Above the title"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:210
+msgid "On the image"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:223
+#: includes/trait-zen-blogger-card.php:773
+#: includes/trait-zen-blogger-card.php:1550
+msgid "Title"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:233
+msgid "Title HTML Tag"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:254
+msgid "Limit Title To"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:255
+msgid "Clamp the title to a number of lines so cards stay the same height. \"No limit\" emits no CSS at all."
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:269
+#: includes/trait-zen-blogger-card.php:1609
+msgid "Meta"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:279
+msgid "Meta Position"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:283
+msgid "Under the title"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:284
+msgid "At the bottom of the card"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:293
+msgid "Divider Above Meta"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:306
+msgid "Meta Items"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:312
+msgid "Author"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:313
+msgid "Date"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:314
+msgid "Last updated"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:315
+#: includes/trait-zen-blogger-card.php:775
+msgid "Comment count"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:316
+msgid "Reading time"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:325
+msgid "Author Avatar"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:338
+msgid "Date Format"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:344
+msgid "Custom"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:353
+msgid "Custom Format"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:367
+msgid "Reading Time Text"
+msgstr ""
+
+#. translators: %s is a literal placeholder the user types, not a variable.
+#: includes/trait-zen-blogger-card.php:369
+#, php-format
+msgid "Use %s for the number of minutes."
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:384
+msgid "Comment Count Text"
+msgstr ""
+
+#. translators: %s is a literal placeholder the user types, not a variable.
+#: includes/trait-zen-blogger-card.php:386
+#, php-format
+msgid "Use %s for the number of comments."
+msgstr ""
+
+#. translators: %s: number of comments.
+#: includes/trait-zen-blogger-card.php:390
+#, php-format
+msgid "%s comments"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:411
+#: includes/trait-zen-blogger-card.php:1791
+msgid "Excerpt"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:421
+msgid "Excerpt From"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:422
+msgid "Reading only paragraphs keeps headings, list items, captions and table cells out of the card text."
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:426
+msgid "Manual excerpt, else paragraphs"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:427
+msgid "Paragraphs only — ignore the manual excerpt"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:428
+msgid "Manual excerpt, else all content"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:437
+msgid "Excerpt Length (words)"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:449
+msgid "Excerpt Ellipsis"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:459
+msgid "Limit Excerpt To"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:473
+msgid "Read More Button"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:483
+#: includes/widgets/class-zen-blogger-posts.php:313
+msgid "Button Text"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:485
+msgid "Read more"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:495
+msgid "Button Icon"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:507
+msgid "Sticky Badge"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:517
+msgid "Badge Text"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:519
+msgid "Featured"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:527
+msgid "Make the Whole Card Clickable"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:528
+msgid "Uses a stretched title link, so screen readers still announce a single, properly named link."
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:538
+msgid "Open Links In"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:542
+msgid "Same tab"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:543
+msgid "New tab"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:551
+msgid "Content Alignment"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:555
+#: includes/trait-zen-blogger-card.php:1716
+#: includes/trait-zen-blogger-card.php:1826
+#: includes/trait-zen-blogger-filter.php:329
+#: includes/widgets/class-zen-blogger-posts.php:731
+#: includes/widgets/class-zen-blogger-posts.php:794
+msgid "Left"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:559
+#: includes/trait-zen-blogger-card.php:1720
+#: includes/trait-zen-blogger-card.php:1830
+#: includes/trait-zen-blogger-filter.php:333
+#: includes/widgets/class-zen-blogger-posts.php:735
+#: includes/widgets/class-zen-blogger-posts.php:798
+msgid "Center"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:563
+#: includes/trait-zen-blogger-card.php:1724
+#: includes/trait-zen-blogger-card.php:1834
+#: includes/trait-zen-blogger-filter.php:337
+#: includes/widgets/class-zen-blogger-posts.php:739
+#: includes/widgets/class-zen-blogger-posts.php:802
+msgid "Right"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:586
+msgid "Query"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:594
+msgid "Source"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:598
+#: includes/widgets/class-zen-blogger-carousel.php:487
+msgid "Latest posts"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:599
+msgid "Related to the current post"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:600
+msgid "Hand-picked"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:601
+msgid "Current Query"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:603
+msgid "Current Query inherits whatever the page itself is already showing — an archive, a search result, the blog index — so the widget follows the template it is placed in rather than defining a query of its own."
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:610
+msgid "Post Type"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:621
+msgid "Choose Posts"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:622
+msgid "Order here is the order shown."
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:634
+msgid "Relate By"
+msgstr ""
+
+#. translators: %s: taxonomy label, e.g. "Categories".
+#: includes/trait-zen-blogger-card.php:649
+#, php-format
+msgid "%s — include"
+msgstr ""
+
+#. translators: %s: taxonomy label, e.g. "Categories".
+#: includes/trait-zen-blogger-card.php:666
+#, php-format
+msgid "%s — exclude"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:682
+msgid "Combine Taxonomy Filters With"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:686
+msgid "AND — must match all"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:687
+msgid "OR — may match any"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:696
+msgid "Authors — include"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:709
+msgid "Authors — exclude"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:721
+msgid "Published"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:725
+msgid "Any time"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:726
+msgid "Past 24 hours"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:727
+msgid "Past week"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:728
+msgid "Past month"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:729
+msgid "Past 3 months"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:730
+msgid "Past year"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:731
+msgid "Custom range"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:741
+msgid "After"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:754
+msgid "Before"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:767
+msgid "Order By"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:771
+msgid "Published date"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:774
+msgid "Menu order"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:776
+#: includes/trait-zen-blogger-filter.php:423
+msgid "Random"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:777
+msgid "Custom field (text)"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:778
+msgid "Custom field (number)"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:788
+msgid "Custom Field Key"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:801
+#: includes/trait-zen-blogger-filter.php:198
+msgid "Order"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:805
+msgid "Descending"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:806
+msgid "Ascending"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:818
+msgid "Number of Posts"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:831
+#: includes/trait-zen-blogger-card.php:1406
+msgid "Offset"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:832
+msgid "Skip this many posts before the first slide."
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:844
+msgid "Sticky Posts"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:848
+msgid "Treat like any other post"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:849
+msgid "Show first"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:850
+msgid "Only sticky posts"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:851
+msgid "Exclude sticky posts"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:861
+msgid "Exclude Posts"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:873
+msgid "Exclude the Current Post"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:883
+msgid "Avoid Duplicates on This Page"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:884
+msgid "Skips posts already shown by another Zen Blogger carousel further up the page."
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:893
+msgid "Only Posts With a Featured Image"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:894
+msgid "Adds a meta query — slightly heavier on very large sites."
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:903
+msgid "Nothing-Found Message"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:904
+msgid "Leave empty to render nothing at all when the query returns no posts."
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:907
+msgid "No posts found."
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:924
+msgid "SEO & AI"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:933
+msgid "Every slide is rendered server-side as a real link inside an <article>, so search engines and AI crawlers read the whole list from the page source without running any JavaScript."
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:941
+msgid "Structured Data (JSON-LD)"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:942
+msgid "Describes the carousel as a schema.org ItemList. Set to None if your SEO plugin already outputs an ItemList for this section."
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:946
+#: includes/widgets/class-zen-blogger-carousel.php:410
+#: includes/widgets/class-zen-blogger-posts.php:290
+msgid "None"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:947
+msgid "ItemList — positions and URLs"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:948
+msgid "ItemList — full post details"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:956
+msgid "Item Type"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:973
+msgid "List Name"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:974
+msgid "Names the list for search engines and AI answers, e.g. \"Latest articles\"."
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:993
+msgid "Card"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1002
+msgid "Content Padding"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1014
+msgid "Gap Between Elements"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1033
+msgid "Content Background"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1042
+#: includes/trait-zen-blogger-card.php:1248
+#: includes/trait-zen-blogger-card.php:1394
+#: includes/trait-zen-blogger-card.php:1511
+#: includes/trait-zen-blogger-card.php:1979
+#: includes/widgets/class-zen-blogger-carousel.php:703
+#: includes/widgets/class-zen-blogger-carousel.php:972
+#: includes/widgets/class-zen-blogger-posts.php:484
+#: includes/widgets/class-zen-blogger-posts.php:616
+#: includes/widgets/class-zen-blogger-posts.php:890
+msgid "Border Radius"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1055
+#: includes/trait-zen-blogger-card.php:1261
+#: includes/trait-zen-blogger-card.php:1889
+#: includes/widgets/class-zen-blogger-carousel.php:626
+msgid "Normal"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1087
+#: includes/trait-zen-blogger-card.php:1287
+#: includes/trait-zen-blogger-card.php:1924
+#: includes/widgets/class-zen-blogger-carousel.php:661
+msgid "Hover"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1102
+#: includes/trait-zen-blogger-card.php:1952
+#: includes/widgets/class-zen-blogger-carousel.php:689
+msgid "Border Color"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1121
+msgid "Lift"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1142
+msgid "Transition Duration"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1175
+msgid "Image"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1188
+msgid "Aspect Ratio"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1198
+msgid "Width divided by height. Reserving the box up front is what keeps the carousel from shifting the layout while images load."
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1208
+msgid "Image Width"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1231
+msgid "Fit"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1235
+msgid "Cover"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1236
+msgid "Contain"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1237
+msgid "Fill"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1275
+#: includes/trait-zen-blogger-card.php:1301
+msgid "Overlay"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1312
+msgid "Zoom"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1342
+msgid "Badge"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1362
+#: includes/trait-zen-blogger-card.php:1895
+#: includes/trait-zen-blogger-card.php:1930
+#: includes/widgets/class-zen-blogger-carousel.php:828
+#: includes/widgets/class-zen-blogger-posts.php:563
+#: includes/widgets/class-zen-blogger-posts.php:713
+#: includes/widgets/class-zen-blogger-posts.php:838
+msgid "Text Color"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1382
+#: includes/trait-zen-blogger-card.php:1499
+#: includes/trait-zen-blogger-card.php:1966
+#: includes/widgets/class-zen-blogger-posts.php:504
+#: includes/widgets/class-zen-blogger-posts.php:628
+#: includes/widgets/class-zen-blogger-posts.php:910
+msgid "Padding"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1437
+msgid "Terms"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1457
+#: includes/trait-zen-blogger-card.php:1570
+#: includes/trait-zen-blogger-card.php:1629
+#: includes/trait-zen-blogger-card.php:1811
+msgid "Color"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1468
+#: includes/trait-zen-blogger-card.php:1581
+msgid "Color — hover"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1488
+#: includes/widgets/class-zen-blogger-carousel.php:961
+msgid "Background — hover"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1523
+#: includes/trait-zen-blogger-card.php:1741
+#: includes/widgets/class-zen-blogger-posts.php:648
+msgid "Gap"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1640
+msgid "Link Color"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1651
+msgid "Separator Color"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1662
+msgid "Divider Color"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1674
+msgid "Divider Thickness"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1693
+msgid "Space Above Meta"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1712
+#: includes/trait-zen-blogger-card.php:1822
+#: includes/trait-zen-blogger-filter.php:325
+#: includes/widgets/class-zen-blogger-posts.php:727
+#: includes/widgets/class-zen-blogger-posts.php:790
+msgid "Alignment"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1728
+msgid "Spread"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1759
+msgid "Avatar Size"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1838
+msgid "Justified"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1868
+msgid "Read More"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1941
+#: includes/widgets/class-zen-blogger-carousel.php:678
+#: includes/widgets/class-zen-blogger-carousel.php:939
+#: includes/widgets/class-zen-blogger-posts.php:849
+msgid "Background"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:1991
+msgid "Icon Spacing"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:2064
+msgid "No limit"
+msgstr ""
+
+#. translators: %s: number of lines.
+#: includes/trait-zen-blogger-card.php:2069
+#, php-format
+msgid "%s line"
+msgid_plural "%s lines"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/trait-zen-blogger-card.php:2086
+msgid "— Select a template —"
+msgstr ""
+
+#. translators: %d: template ID.
+#: includes/trait-zen-blogger-card.php:2109
+#, php-format
+msgid "(untitled) #%d"
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:2140
+msgid "Choose a card template."
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:2149
+msgid "The card template cannot be the page it is placed on."
+msgstr ""
+
+#: includes/trait-zen-blogger-card.php:2158
+msgid "That card template is missing or not published."
+msgstr ""
+
+#. translators: %d: post ID.
+#: includes/trait-zen-blogger-card.php:2334
+#, php-format
+msgid "(no title) #%d"
+msgstr ""
+
+#. translators: %s: post title.
+#: includes/trait-zen-blogger-card.php:3129
+#, php-format
+msgid "Read more: %s"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:27
+msgid "Search & Filter"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:35
+msgid "Show Search & Filter Bar"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:36
+msgid "A real form with real inputs. It works with JavaScript disabled, and every filtered view has its own shareable URL."
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:44
+msgid "Search Box"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:54
+msgid "Search Placeholder"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:56
+#: includes/trait-zen-blogger-filter.php:755
+msgid "Search posts…"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:67
+msgid "Search Label"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:68
+msgid "Always rendered for screen readers. Placeholder text alone is not a label."
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:70
+#: includes/trait-zen-blogger-filter.php:744
+msgid "Search posts"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:81
+msgid "Filter By"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:82
+msgid "Choose one or more taxonomies. Each becomes its own labelled group."
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:96
+msgid "Control Type"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:100
+msgid "Buttons — pick one"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:101
+msgid "Checkboxes — pick several"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:102
+msgid "Dropdown"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:111
+msgid "Match"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:112
+msgid "When several terms are ticked."
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:116
+msgid "Any of them"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:117
+msgid "All of them"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:129
+msgid "\"All\" Label"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:131
+#: includes/trait-zen-blogger-filter.php:987
+#: includes/trait-zen-blogger-filter.php:1037
+msgid "All"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:142
+msgid "Show Post Counts"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:151
+msgid "Max Terms Per Taxonomy"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:163
+msgid "Include Empty Terms"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:164
+msgid "Off by default: a filter that always returns nothing is just a dead end."
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:173
+msgid "Sort Control"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:183
+msgid "Sort Label"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:185
+#: includes/trait-zen-blogger-filter.php:775
+msgid "Sort by"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:208
+msgid "Label"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:209
+msgid "What the visitor sees. Leave empty to use the built-in wording."
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:219
+msgid "Sort Options"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:220
+msgid "Choose which orders to offer and what to call them. Drag to reorder; the first row is the default."
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:230
+#: includes/trait-zen-blogger-filter.php:417
+msgid "Newest first"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:234
+#: includes/trait-zen-blogger-filter.php:418
+msgid "Oldest first"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:238
+#: includes/trait-zen-blogger-filter.php:419
+msgid "Title A–Z"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:242
+#: includes/trait-zen-blogger-filter.php:421
+msgid "Most discussed"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:255
+msgid "Show Result Count"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:265
+msgid "\"Clear\" Button"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:275
+msgid "Clear Text"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:277
+#: includes/trait-zen-blogger-filter.php:662
+msgid "Clear filters"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:288
+msgid "Result Count Text"
+msgstr ""
+
+#. translators: 1: the literal characters %s, 2: an example using the same placeholder.
+#: includes/trait-zen-blogger-filter.php:293
+#, php-format
+msgid "Use %1$s where the number should go — for example \"%2$s articles found\"."
+msgstr ""
+
+#. translators: %s: number of matching posts.
+#: includes/trait-zen-blogger-filter.php:301
+#, php-format
+msgid "%s posts"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:313
+msgid "Apply Button Text"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:314
+msgid "Only ever seen by visitors with JavaScript disabled — everyone else gets results as soon as a control changes."
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:316
+#: includes/trait-zen-blogger-filter.php:678
+msgid "Apply"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:420
+msgid "Title Z–A"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:422
+msgid "Recently updated"
+msgstr ""
+
+#: includes/trait-zen-blogger-filter.php:630
+msgid "Search and filter posts"
+msgstr ""
+
+#. translators: %s: number of matching posts.
+#: includes/trait-zen-blogger-filter.php:706
+#, php-format
+msgid "%s post"
+msgid_plural "%s posts"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:44
+msgid "Blog Carousel"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:165
+msgid "Carousel"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:173
+msgid "Slides Per View"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:179
+msgid "Auto (card width)"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:195
+msgid "Slides to Scroll"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:206
+msgid "Gap Between Slides"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:225
+msgid "Rows"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:226
+msgid "More than one row stacks slides into a grid before scrolling."
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:237
+msgid "Effect"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:241
+msgid "Slide"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:242
+msgid "Fade"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:243
+msgid "Coverflow"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:244
+msgid "Cards"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:245
+msgid "Creative — stacked depth"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:254
+msgid "Motion Mode"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:258
+msgid "Standard slide steps"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:259
+msgid "Free scroll"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:260
+msgid "Ticker — continuous marquee"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:269
+msgid "Center Active Slide"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:278
+msgid "Infinite Loop"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:287
+msgid "Transition Speed"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:307
+msgid "Autoplay"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:308
+msgid "A play/pause button is added automatically — WCAG 2.2.2 requires one for content that moves on its own."
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:317
+msgid "Autoplay Delay"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:338
+msgid "Pause on Hover"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:348
+msgid "Stop After User Interaction"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:358
+#: includes/widgets/class-zen-blogger-carousel.php:571
+msgid "Arrows"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:368
+msgid "Previous Icon"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:369
+#: includes/widgets/class-zen-blogger-carousel.php:380
+msgid "Leave empty to use the built-in chevron, which needs no icon font."
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:379
+msgid "Next Icon"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:390
+msgid "Arrows Position"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:394
+msgid "Over the slides"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:395
+msgid "Outside the slides"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:396
+msgid "Above, aligned right"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:397
+msgid "Below, next to the dots"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:406
+#: includes/widgets/class-zen-blogger-carousel.php:744
+#: includes/widgets/class-zen-blogger-posts.php:278
+#: includes/widgets/class-zen-blogger-posts.php:781
+msgid "Pagination"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:411
+msgid "Dots"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:412
+msgid "Dots — dynamic"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:413
+msgid "Fraction (2 / 9)"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:414
+msgid "Progress bar"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:415
+msgid "Draggable scrollbar"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:424
+msgid "Keyboard Control"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:434
+msgid "Mousewheel Control"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:442
+msgid "Grab Cursor"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:451
+msgid "Equal Card Height"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:475
+#: includes/widgets/class-zen-blogger-posts.php:393
+msgid "Accessibility"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:483
+msgid "Carousel Label"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:484
+msgid "Announced by screen readers, e.g. \"Latest articles\". Give each carousel on a page a different label."
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:494
+msgid "Play / Pause Button"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:495
+msgid "Only rendered when autoplay is on. It can be kept out of sight, but not removed — a carousel that moves on its own with no way to stop it fails WCAG 2.2.2. \"Keyboard only\" hides it visually while leaving it reachable by Tab, where it becomes visible."
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:499
+msgid "Keyboard only — appears on focus"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:500
+msgid "On hover and keyboard focus"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:501
+msgid "Always visible"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:510
+msgid "Button Position"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:514
+msgid "Top left"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:515
+msgid "Top right"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:516
+msgid "Bottom left"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:517
+msgid "Bottom right"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:526
+#: includes/widgets/class-zen-blogger-posts.php:421
+msgid "Respect \"Reduce Motion\""
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:527
+msgid "Visitors whose system asks for reduced motion get no autoplay and instant transitions."
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:536
+msgid "Lazy-Load Off-Screen Slides"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:537
+msgid "Images in the first visible row load eagerly with high priority; the rest load lazily."
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:580
+msgid "Icon Size"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:602
+#: includes/widgets/class-zen-blogger-carousel.php:906
+msgid "Button Size"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:615
+msgid "Kept at 44px or more by default so the target meets WCAG 2.5.8."
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:632
+#: includes/widgets/class-zen-blogger-carousel.php:667
+#: includes/widgets/class-zen-blogger-carousel.php:928
+msgid "Icon Color"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:716
+msgid "Horizontal Offset"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:753
+msgid "Dot Size"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:776
+msgid "Dot Color"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:788
+msgid "Active Dot Color"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:800
+msgid "Spacing"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:840
+msgid "Track Color"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:852
+msgid "Fill Color"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:865
+msgid "Distance From Slides"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:897
+msgid "Play / Pause"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-carousel.php:950
+msgid "Icon Color — hover"
+msgstr ""
+
+#. translators: 1: current slide number, 2: total slide count.
+#: includes/widgets/class-zen-blogger-carousel.php:1182
+#, php-format
+msgid "%1$d of %2$d"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:40
+#: includes/widgets/class-zen-blogger-posts.php:405
+msgid "Posts"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:150
+msgid "Grid"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:162
+msgid "Grid — equal rows"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:163
+msgid "Masonry — natural heights"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:164
+msgid "List — one per row"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:165
+msgid "Feature — first post larger"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:173
+msgid "Columns"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:206
+msgid "Column Gap"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:228
+msgid "Row Gap"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:253
+msgid "Feature Spans"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:254
+msgid "How many columns the first post occupies."
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:286
+msgid "Type"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:291
+msgid "Page numbers"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:292
+msgid "Previous / Next"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:293
+msgid "Load More button (AJAX)"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:294
+msgid "Infinite scroll (AJAX)"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:302
+msgid "Update Without Reloading"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:303
+msgid "Page numbers and Previous/Next stay real links; this only upgrades them to fetch in place. The address bar is kept in step so Back and sharing still work."
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:316
+#: includes/widgets/class-zen-blogger-posts.php:1312
+msgid "Load more posts"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:328
+msgid "Previous Text"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:330
+#: includes/widgets/class-zen-blogger-posts.php:1333
+msgid "Previous"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:338
+msgid "Next Text"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:340
+#: includes/widgets/class-zen-blogger-posts.php:1334
+msgid "Next"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:348
+msgid "Auto-Load Limit"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:349
+msgid "How many pages load automatically before the button must be pressed again. A feed that never stops growing puts the footer permanently out of reach."
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:362
+msgid "Infinite scroll still renders a real Load More button as its fallback, and stops loading after the visitor presses it — an endless feed traps keyboard users before they can reach anything below it."
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:372
+msgid "With the Current Query source the widget pages through the archive itself, so its links move the whole page. On a listing this plugin cannot describe to a background request, it falls back to plain page links rather than risk fetching the wrong posts."
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:401
+msgid "List Label"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:402
+msgid "Announced by screen readers. Give each list on a page a different label."
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:413
+msgid "After every filter or page change the result count is announced politely, the grid is marked busy while loading, and focus moves to the first new post so keyboard users are not dropped back to the top of the page."
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:422
+msgid "Visitors whose system asks for reduced motion get no card lift, zoom or transitions."
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:431
+msgid "Lazy-Load Below the Fold"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:432
+msgid "Images in the first row load eagerly with high priority; the rest load lazily."
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:450
+msgid "Filter Bar"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:459
+msgid "Container"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:516
+msgid "Space Between Rows"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:546
+msgid "Controls"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:583
+msgid "Selected Text Color"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:584
+msgid "Also used for the Clear and Apply buttons, so an action reads the same as a chosen term instead of needing a border of its own."
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:597
+msgid "Selected Background"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:672
+msgid "Space Below"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:694
+msgid "Result Count"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:753
+#: includes/widgets/class-zen-blogger-posts.php:922
+msgid "Space Above"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:816
+msgid "Full Width Button"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:860
+msgid "Current Page Color"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:871
+msgid "Current Page Background"
+msgstr ""
+
+#: includes/widgets/class-zen-blogger-posts.php:1305
+msgid "Posts pagination"
+msgstr ""
+
+#. translators: 1: number of posts shown so far, 2: total number of posts.
+#: includes/widgets/class-zen-blogger-posts.php:1469
+#, php-format
+msgid "Showing %1$s of %2$s posts"
+msgstr ""
+
+#: zen-blogger.php:67
+msgid "Zen Blogger requires Elementor to be installed and active."
+msgstr ""
+
+#. translators: %s: minimum required Elementor version number.
+#: zen-blogger.php:84
+#, php-format
+msgid "Zen Blogger requires Elementor %s or newer."
+msgstr ""

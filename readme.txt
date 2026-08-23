@@ -128,12 +128,13 @@ Yes. The layout uses logical properties throughout and the carousel direction fo
 
 == Screenshots ==
 
-1. The Posts widget — grid layout with a filter bar and Load More.
-2. The Classic skin with dots and outside arrows.
-3. The Overlay skin with a ticker.
-4. The Query panel — taxonomy include and exclude filters.
-5. The Accessibility panel — play/pause and reduced-motion controls.
-6. Style controls for the card, image and read-more button.
+1. The Posts widget in a grid, with the search-and-filter bar, the result count and a Load More button.
+2. The Blog Carousel using the Classic skin, with dots and the arrows outside the track.
+3. The Blog Carousel using the Overlay skin, where the text sits over the image.
+4. The Posts widget in the Feature layout, where the first post spans wider than the rest.
+5. The Posts widget in the List layout with the Side-by-side skin and numbered pagination.
+6. The Content panel: query, layout, search and filter, pagination and accessibility controls.
+7. The Style panel: card, image, badge and term controls, each with Normal and Hover states.
 
 == Changelog ==
 
