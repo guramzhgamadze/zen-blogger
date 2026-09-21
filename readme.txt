@@ -4,7 +4,7 @@ Tags: elementor, carousel, blog, slider, posts
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.8.6
+Stable tag: 1.9.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -137,6 +137,15 @@ Yes. The layout uses logical properties throughout and the carousel direction fo
 7. The Style panel: card, image, badge and term controls, each with Normal and Hover states.
 
 == Changelog ==
+
+= 1.9.0 =
+* Added a Focal Point control. Cropped photographs were always cropped from the middle, which is what cuts the heads off portraits in a wide card. Nine presets, or Custom for a precise point.
+* Added a Shape control: circle, oval, diamond, hexagon, pentagon, octagon, triangle, trapezoid, parallelogram, or your own mask image. The shape is cut on the image box, so a hover zoom moves the photograph inside a shape that stays still.
+* Added Scale Down and None to Fit, and an Empty Space colour for the bars the letterboxing fits leave behind.
+* Fixed: the Image Resolution select never did anything. It was read under the wrong name, so every card was served the `large` size whatever was picked, and the custom-size option could not be reached at all.
+* Added a Quality slider for the custom size, since that is the only size this widget generates itself and therefore the only one it can honestly compress.
+* Fixed: the Aspect Ratio control shipped a default that was written into every page whether or not anyone chose it, silently overriding the ratio each skin sets for itself. The overlay skin's taller crop, the side skin's full-height image and the feature card's wide crop were all unreachable.
+* Custom-size images now carry width and height, so the page stops shifting as each photograph arrives.
 
 = 1.8.6 =
 * Tested against WordPress 7.1.

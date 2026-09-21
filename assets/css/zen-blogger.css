@@ -144,7 +144,15 @@
 	display: block;
 	flex: 0 0 auto;
 	overflow: hidden;
-	aspect-ratio: 1.6;
+	aspect-ratio: var(--zenblog-img-ratio, 1.6);
+	-webkit-mask-image: var(--zenblog-img-mask, none);
+	mask-image: var(--zenblog-img-mask, none);
+	-webkit-mask-size: contain;
+	mask-size: contain;
+	-webkit-mask-position: center;
+	mask-position: center;
+	-webkit-mask-repeat: no-repeat;
+	mask-repeat: no-repeat;
 }
 
 .zenblog__media img {
@@ -152,6 +160,7 @@
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
+	object-position: var(--zenblog-img-pos, 50% 50%);
 	transition: transform 0.4s ease, filter 0.4s ease;
 }
 
@@ -306,7 +315,7 @@
 
 .zenblog--skin-overlay .zenblog__media {
 	height: 100%;
-	aspect-ratio: 1.1;
+	aspect-ratio: var(--zenblog-img-ratio, 1.1);
 }
 
 .zenblog--skin-overlay .zenblog__body {
@@ -362,7 +371,7 @@
 
 .zenblog--skin-side .zenblog__media {
 	flex: 0 0 40%;
-	aspect-ratio: auto;
+	aspect-ratio: var(--zenblog-img-ratio, auto);
 }
 
 .zenblog--skin-side .zenblog__body {
@@ -377,7 +386,7 @@
 
 	.zenblog--skin-side .zenblog__media {
 		flex-basis: auto;
-		aspect-ratio: 1.6;
+		aspect-ratio: var(--zenblog-img-ratio, 1.6);
 	}
 }
 
@@ -827,7 +836,7 @@
 }
 
 .zenblog--layout-feature .zenblog__item:first-child .zenblog__media {
-	aspect-ratio: 2.1;
+	aspect-ratio: var(--zenblog-img-ratio, 2.1);
 }
 
 @media (min-width: 768px) {

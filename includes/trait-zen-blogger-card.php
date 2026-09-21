@@ -142,6 +142,38 @@ trait Zen_Blogger_Card_Trait {
 			)
 		);
 
+		/*
+		 * Compression, and only where the plugin is the one doing the
+		 * compressing. Every other resolution in the select above was written by
+		 * WordPress at upload time, and a widget cannot recompress those at
+		 * render without rewriting files other things on the site are also
+		 * using — so offering a quality slider for them would be a lie. A custom
+		 * size is generated on demand, and the quality is part of the generated
+		 * filename, so moving this slider really does produce a new file.
+		 */
+		$this->add_control(
+			'zenblog_image_quality',
+			array(
+				'label'       => esc_html__( 'Quality', 'zen-blogger' ),
+				'description' => esc_html__( 'Compression for the custom size this widget generates. Lower is a smaller file; leave it alone to keep the site-wide setting.', 'zen-blogger' ),
+				'type'        => Controls_Manager::SLIDER,
+				'size_units'  => array( '%' ),
+				'range'       => array(
+					'%' => array(
+						'min'  => 20,
+						'max'  => 100,
+						'step' => 5,
+					),
+				),
+				'condition'   => array(
+					'zenblog_show_image' => 'yes',
+					'zenblog_skin!'      => 'minimal',
+					// Group_Control_Image_Size names this "<group name>_size".
+					'zenblog_image_size' => 'custom',
+				),
+			)
+		);
+
 		$this->add_control(
 			'zenblog_image_fallback',
 			array(
@@ -1194,10 +1226,19 @@ trait Zen_Blogger_Card_Trait {
 						'step' => 0.05,
 					),
 				),
-				'default'     => array( 'size' => 1.6 ),
+
+				/*
+				 * Deliberately no default. A default here is written into every
+				 * page's CSS whether or not anyone chose it, and because it lands
+				 * on the same element it silently beat each skin's own ratio — the
+				 * overlay skin's 1.1, the side skin's `auto`, the feature card's
+				 * 2.1 were all dead the moment the widget rendered. The stylesheet
+				 * now carries those as fallbacks of --zenblog-img-ratio, so a skin
+				 * keeps its shape until someone actually moves this slider.
+				 */
 				'description' => esc_html__( 'Width divided by height. Reserving the box up front is what keeps the carousel from shifting the layout while images load.', 'zen-blogger' ),
 				'selectors'   => array(
-					'{{WRAPPER}} .zenblog__media' => 'aspect-ratio: {{SIZE}};',
+					'{{WRAPPER}} .zenblog__media' => '--zenblog-img-ratio: {{SIZE}};',
 				),
 			)
 		);
@@ -1225,19 +1266,197 @@ trait Zen_Blogger_Card_Trait {
 			)
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'zenblog_image_fit',
 			array(
 				'label'     => esc_html__( 'Fit', 'zen-blogger' ),
 				'type'      => Controls_Manager::SELECT,
 				'default'   => 'cover',
 				'options'   => array(
-					'cover'   => esc_html__( 'Cover', 'zen-blogger' ),
-					'contain' => esc_html__( 'Contain', 'zen-blogger' ),
-					'fill'    => esc_html__( 'Fill', 'zen-blogger' ),
+					'cover'      => esc_html__( 'Cover', 'zen-blogger' ),
+					'contain'    => esc_html__( 'Contain', 'zen-blogger' ),
+					'fill'       => esc_html__( 'Fill', 'zen-blogger' ),
+					'scale-down' => esc_html__( 'Scale Down', 'zen-blogger' ),
+					'none'       => esc_html__( 'None', 'zen-blogger' ),
 				),
 				'selectors' => array(
 					'{{WRAPPER}} .zenblog__media img' => 'object-fit: {{VALUE}};',
+				),
+			)
+		);
+
+		/*
+		 * Focal point. `cover` crops, and without this it always crops from the
+		 * middle — which is what beheads people in portrait photographs. The nine
+		 * presets are the same set Elementor's own Image widget offers, so the
+		 * vocabulary is already familiar; Custom then opens the two sliders, the
+		 * way Elementor's mask position control does.
+		 *
+		 * The value goes to a custom property rather than straight to
+		 * object-position so that Custom can resolve through the X/Y pair. The
+		 * mapping below is what keeps the literal string "custom" out of the CSS.
+		 */
+		$this->add_responsive_control(
+			'zenblog_image_position',
+			array(
+				'label'                => esc_html__( 'Focal Point', 'zen-blogger' ),
+				'description'          => esc_html__( 'Which part of the photo stays in frame when the card crops it.', 'zen-blogger' ),
+				'type'                 => Controls_Manager::SELECT,
+				'default'              => 'center center',
+				'options'              => array(
+					'center center' => esc_html__( 'Center Center', 'zen-blogger' ),
+					'center left'   => esc_html__( 'Center Left', 'zen-blogger' ),
+					'center right'  => esc_html__( 'Center Right', 'zen-blogger' ),
+					'top center'    => esc_html__( 'Top Center', 'zen-blogger' ),
+					'top left'      => esc_html__( 'Top Left', 'zen-blogger' ),
+					'top right'     => esc_html__( 'Top Right', 'zen-blogger' ),
+					'bottom center' => esc_html__( 'Bottom Center', 'zen-blogger' ),
+					'bottom left'   => esc_html__( 'Bottom Left', 'zen-blogger' ),
+					'bottom right'  => esc_html__( 'Bottom Right', 'zen-blogger' ),
+					'custom'        => esc_html__( 'Custom', 'zen-blogger' ),
+				),
+				'selectors_dictionary' => array(
+					'custom' => 'var(--zenblog-img-px, 50%) var(--zenblog-img-py, 50%)',
+				),
+				'condition'            => array(
+					'zenblog_image_fit' => array( 'cover', 'contain', 'scale-down', 'none' ),
+				),
+				'selectors'            => array(
+					'{{WRAPPER}} .zenblog__media img' => '--zenblog-img-pos: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'zenblog_image_position_x',
+			array(
+				'label'      => esc_html__( 'Horizontal Focus', 'zen-blogger' ),
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( '%' ),
+				'default'    => array(
+					'unit' => '%',
+					'size' => 50,
+				),
+				'range'      => array(
+					'%' => array(
+						'min' => 0,
+						'max' => 100,
+					),
+				),
+				'condition'  => array(
+					'zenblog_image_position' => 'custom',
+					'zenblog_image_fit'      => array( 'cover', 'contain', 'scale-down', 'none' ),
+				),
+				'selectors'  => array(
+					'{{WRAPPER}} .zenblog__media img' => '--zenblog-img-px: {{SIZE}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'zenblog_image_position_y',
+			array(
+				'label'      => esc_html__( 'Vertical Focus', 'zen-blogger' ),
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( '%' ),
+				'default'    => array(
+					'unit' => '%',
+					'size' => 50,
+				),
+				'range'      => array(
+					'%' => array(
+						'min' => 0,
+						'max' => 100,
+					),
+				),
+				'condition'  => array(
+					'zenblog_image_position' => 'custom',
+					'zenblog_image_fit'      => array( 'cover', 'contain', 'scale-down', 'none' ),
+				),
+				'selectors'  => array(
+					'{{WRAPPER}} .zenblog__media img' => '--zenblog-img-py: {{SIZE}}{{UNIT}};',
+				),
+			)
+		);
+
+		/*
+		 * Only the fits that letterbox leave anything to fill, so the control is
+		 * not offered for `cover` or `fill` — where it would paint nothing and
+		 * read as broken.
+		 */
+		$this->add_control(
+			'zenblog_image_bg',
+			array(
+				'label'       => esc_html__( 'Empty Space', 'zen-blogger' ),
+				'description' => esc_html__( 'Fills the bars left over when the photo does not fill the whole box.', 'zen-blogger' ),
+				'type'        => Controls_Manager::COLOR,
+				'condition'   => array(
+					'zenblog_image_fit' => array( 'contain', 'scale-down', 'none' ),
+				),
+				'selectors'   => array(
+					'{{WRAPPER}} .zenblog__media' => 'background-color: {{VALUE}};',
+				),
+			)
+		);
+
+		/*
+		 * Shape. Elementor ships masking on the Advanced tab, but that masks the
+		 * whole widget — the entire grid as one shape — so it cannot shape the
+		 * individual cards. These are clip-path geometry rather than Elementor's
+		 * SVG masks: no extra request, no dependency on another plugin's asset
+		 * paths, and the shape is cut on .zenblog__media so a hover zoom scales
+		 * the photograph inside a shape that stays put.
+		 */
+		$this->add_responsive_control(
+			'zenblog_image_shape',
+			array(
+				'label'                => esc_html__( 'Shape', 'zen-blogger' ),
+				'type'                 => Controls_Manager::SELECT,
+				'default'              => '',
+				'options'              => array(
+					''              => esc_html__( 'Rectangle', 'zen-blogger' ),
+					'circle'        => esc_html__( 'Circle', 'zen-blogger' ),
+					'oval'          => esc_html__( 'Oval', 'zen-blogger' ),
+					'diamond'       => esc_html__( 'Diamond', 'zen-blogger' ),
+					'hexagon'       => esc_html__( 'Hexagon', 'zen-blogger' ),
+					'hexagon-flat'  => esc_html__( 'Hexagon (Flat Top)', 'zen-blogger' ),
+					'pentagon'      => esc_html__( 'Pentagon', 'zen-blogger' ),
+					'octagon'       => esc_html__( 'Octagon', 'zen-blogger' ),
+					'triangle'      => esc_html__( 'Triangle', 'zen-blogger' ),
+					'trapezoid'     => esc_html__( 'Trapezoid', 'zen-blogger' ),
+					'parallelogram' => esc_html__( 'Parallelogram', 'zen-blogger' ),
+					'custom'        => esc_html__( 'Custom Mask', 'zen-blogger' ),
+				),
+				'selectors_dictionary' => array(
+					'circle'        => 'circle(50% at 50% 50%)',
+					'oval'          => 'ellipse(40% 50% at 50% 50%)',
+					'diamond'       => 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)',
+					'hexagon'       => 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
+					'hexagon-flat'  => 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)',
+					'pentagon'      => 'polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)',
+					'octagon'       => 'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)',
+					'triangle'      => 'polygon(50% 0%, 100% 100%, 0% 100%)',
+					'trapezoid'     => 'polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%)',
+					'parallelogram' => 'polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%)',
+					// Custom hands the job to the mask control below, so the
+					// geometric clip must be switched off rather than left set.
+					'custom'        => 'none',
+				),
+				'selectors'            => array(
+					'{{WRAPPER}} .zenblog__media' => 'clip-path: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'zenblog_image_mask',
+			array(
+				'label'       => esc_html__( 'Mask Image', 'zen-blogger' ),
+				'description' => esc_html__( 'An SVG or PNG whose opaque area becomes the visible shape.', 'zen-blogger' ),
+				'type'        => Controls_Manager::MEDIA,
+				'condition'   => array( 'zenblog_image_shape' => 'custom' ),
+				'selectors'   => array(
+					'{{WRAPPER}} .zenblog__media' => '--zenblog-img-mask: url( {{URL}} );',
 				),
 			)
 		);
@@ -2596,6 +2815,116 @@ trait Zen_Blogger_Card_Trait {
 	}
 
 	/**
+	 * Resolve the URL for a custom-dimension image, honouring the Quality slider.
+	 *
+	 * Elementor generates custom sizes with the BFI_Thumb library it bundles.
+	 * That library takes a quality and — the part that makes a quality control
+	 * honest rather than decorative — folds it into the generated filename, so
+	 * raising the slider writes a new file instead of serving the one made at the
+	 * old setting. Elementor only loads the library from inside its own helper,
+	 * so it has to be on hand before the size array below means anything.
+	 *
+	 * Anything unexpected falls back to Elementor's helper, which keeps its own
+	 * fallbacks for attachments that have no file at the requested size.
+	 *
+	 * @param int   $thumb_id Attachment id.
+	 * @param array $settings Widget settings.
+	 * @return string
+	 */
+	private function custom_size_src( $thumb_id, array $settings ) {
+		$quality = isset( $settings['zenblog_image_quality']['size'] ) ? (int) $settings['zenblog_image_quality']['size'] : 0;
+
+		list( $width, $height ) = $this->custom_size_wh( $settings );
+
+		if ( $quality < 1 || $quality > 100 || ( ! $width && ! $height ) ) {
+			return (string) Group_Control_Image_Size::get_attachment_image_src( $thumb_id, 'zenblog_image', $settings );
+		}
+
+		$lib = defined( 'ELEMENTOR_PATH' ) ? ELEMENTOR_PATH . 'includes/libraries/bfi-thumb/bfi-thumb.php' : '';
+
+		if ( ! function_exists( 'bfi_thumb' ) && '' !== $lib && file_exists( $lib ) ) {
+			require_once $lib;
+		}
+
+		// Still absent means a future Elementor moved or dropped the library, so
+		// take the quality-less path rather than fataling on an undefined call.
+		if ( ! function_exists( 'bfi_thumb' ) ) {
+			return (string) Group_Control_Image_Size::get_attachment_image_src( $thumb_id, 'zenblog_image', $settings );
+		}
+
+		$full = wp_get_attachment_image_url( $thumb_id, 'full' );
+
+		if ( ! $full ) {
+			return (string) Group_Control_Image_Size::get_attachment_image_src( $thumb_id, 'zenblog_image', $settings );
+		}
+
+		/*
+		 * The library's own entry point rather than a size array passed through
+		 * wp_get_attachment_image_src(): that argument is documented as
+		 * string|int[], and the keys this needs are neither, so going in the
+		 * front door keeps the call inside a contract that actually covers it.
+		 */
+		$params = array(
+			'crop'    => true,
+			'quality' => $quality,
+		);
+
+		if ( $width ) {
+			$params['width'] = $width;
+		}
+
+		if ( $height ) {
+			$params['height'] = $height;
+		}
+
+		$src = bfi_thumb( $full, $params );
+
+		if ( is_string( $src ) && '' !== $src ) {
+			return $src;
+		}
+
+		return (string) Group_Control_Image_Size::get_attachment_image_src( $thumb_id, 'zenblog_image', $settings );
+	}
+
+	/**
+	 * The custom dimensions the user typed, as integers.
+	 *
+	 * @param array $settings Widget settings.
+	 * @return int[] Width then height; either may be 0 for "not set".
+	 */
+	private function custom_size_wh( array $settings ) {
+		$dim = isset( $settings['zenblog_image_custom_dimension'] ) && is_array( $settings['zenblog_image_custom_dimension'] )
+			? $settings['zenblog_image_custom_dimension']
+			: array();
+
+		$width  = isset( $dim['width'] ) && '' !== $dim['width'] ? (int) $dim['width'] : 0;
+		$height = isset( $dim['height'] ) && '' !== $dim['height'] ? (int) $dim['height'] : 0;
+
+		return array( max( 0, $width ), max( 0, $height ) );
+	}
+
+	/**
+	 * Width and height attributes, so a custom-size image reserves its box.
+	 *
+	 * These come free with a registered size, because wp_get_attachment_image()
+	 * adds them; the custom branch builds its own tag, so without this the card
+	 * has no intrinsic size to lay out against and the page shifts as each
+	 * photograph arrives.
+	 *
+	 * @param array $settings Widget settings.
+	 * @return string
+	 */
+	private function custom_size_dimensions( array $settings ) {
+		list( $width, $height ) = $this->custom_size_wh( $settings );
+
+		if ( $width < 1 || $height < 1 ) {
+			return '';
+		}
+
+		return sprintf( ' width="%1$d" height="%2$d"', $width, $height );
+	}
+
+	/**
 	 * Render the featured image block.
 	 *
 	 * @param array $settings  Widget settings.
@@ -2633,19 +2962,30 @@ trait Zen_Blogger_Card_Trait {
 		$image_html = '';
 
 		if ( $thumb_id ) {
-			$size = isset( $settings['zenblog_image_size_size'] ) ? $settings['zenblog_image_size_size'] : 'large';
+			/*
+			 * Group_Control_Image_Size names its child control "<name>_size", and
+			 * the group is registered as 'zenblog_image' — so the setting is
+			 * `zenblog_image_size`. Reading `zenblog_image_size_size` found
+			 * nothing, quietly took the fallback, and made the Image Resolution
+			 * select decorative: every card was served `large` whatever the user
+			 * picked, and the custom branch below was unreachable.
+			 */
+			$size = isset( $settings['zenblog_image_size'] ) && '' !== $settings['zenblog_image_size']
+				? $settings['zenblog_image_size']
+				: 'large';
 
 			if ( 'custom' === $size ) {
-				$src = Group_Control_Image_Size::get_attachment_image_src( $thumb_id, 'zenblog_image', $settings );
+				$src = $this->custom_size_src( $thumb_id, $settings );
 
 				if ( $src ) {
 					$image_html = sprintf(
-						'<img src="%1$s" alt="%2$s" class="%3$s" decoding="async" loading="%4$s"%5$s />',
+						'<img src="%1$s" alt="%2$s" class="%3$s" decoding="async" loading="%4$s"%5$s%6$s />',
 						esc_url( $src ),
 						esc_attr( (string) get_post_meta( $thumb_id, '_wp_attachment_image_alt', true ) ),
 						esc_attr( $attr['class'] ),
 						esc_attr( $attr['loading'] ),
-						isset( $attr['fetchpriority'] ) ? ' fetchpriority="high"' : ''
+						isset( $attr['fetchpriority'] ) ? ' fetchpriority="high"' : '',
+						$this->custom_size_dimensions( $settings )
 					);
 				}
 			} else {
