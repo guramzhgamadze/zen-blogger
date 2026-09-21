@@ -2660,14 +2660,32 @@ trait Zen_Blogger_Card_Trait {
 	}
 
 	/**
-	 * Whether the Zen GEO plugin is active on this request.
+	 * Whether Zen GEO is going to print the page node we attach to.
 	 *
 	 * Checked at runtime, never at file-load: plugins are loaded in alphabetical
 	 * order, so "zen-blogger" is parsed before "zen-geo" has defined anything.
 	 *
+	 * Installed is not the same as emitting. Zen GEO's schema mode defaults to
+	 * "auto", which stands down the moment it detects another SEO plugin — so on
+	 * a site running Yoast it prints no graph at all, and an isPartOf pointing at
+	 * its "#article" node would reference something that is not on the page.
+	 * Schema validators report that as an unresolved reference, which is a worse
+	 * outcome than simply not linking the two graphs.
+	 *
 	 * @return bool
 	 */
 	private function zengeo_active() {
+		$active = defined( 'ZENGEO_VERSION' );
+
+		if ( $active && function_exists( 'zengeo_should_output_schema' ) ) {
+			$active = (bool) zengeo_should_output_schema();
+		}
+
+		// The singular page node is its own option, and can be off on its own.
+		if ( $active && is_singular() && function_exists( 'zengeo_get_option' ) ) {
+			$active = (bool) zengeo_get_option( 'schema_article' );
+		}
+
 		/**
 		 * Filter whether Zen Blogger links its structured data into Zen GEO's graph.
 		 *
@@ -2675,7 +2693,7 @@ trait Zen_Blogger_Card_Trait {
 		 *
 		 * @param bool $active Whether the Zen GEO integration should apply.
 		 */
-		return (bool) apply_filters( 'zenblog_zengeo_integration', defined( 'ZENGEO_VERSION' ) );
+		return (bool) apply_filters( 'zenblog_zengeo_integration', $active );
 	}
 
 	/**

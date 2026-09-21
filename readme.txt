@@ -135,6 +135,9 @@ Yes. The layout uses logical properties throughout and the carousel direction fo
 5. The Posts widget in the List layout with the Side-by-side skin and numbered pagination.
 6. The Content panel: query, layout, search and filter, pagination and accessibility controls.
 7. The Style panel: card, image, badge and term controls, each with Normal and Hover states.
+8. Circular thumbnails, cut per card by the Shape control.
+9. The Image section of the Style panel: fit, focal point and shape, with the result behind it.
+10. Image Resolution set to Custom, with the Quality slider that compresses the generated file.
 
 == Changelog ==
 
@@ -146,6 +149,7 @@ Yes. The layout uses logical properties throughout and the carousel direction fo
 * Added a Quality slider for the custom size, since that is the only size this widget generates itself and therefore the only one it can honestly compress.
 * Fixed: the Aspect Ratio control shipped a default that was written into every page whether or not anyone chose it, silently overriding the ratio each skin sets for itself. The overlay skin's taller crop, the side skin's full-height image and the feature card's wide crop were all unreachable.
 * Custom-size images now carry width and height, so the page stops shifting as each photograph arrives.
+* Fixed: the structured data linked itself to a Zen GEO page node even on sites where Zen GEO prints no graph at all, because it stands down whenever another SEO plugin is present. That left the ItemList pointing at a node that was not on the page, which validators report as an unresolved reference. It now links only when the node is really there.
 
 = 1.8.6 =
 * Tested against WordPress 7.1.
