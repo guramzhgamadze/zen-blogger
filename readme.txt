@@ -4,7 +4,7 @@ Tags: elementor, carousel, blog, slider, posts
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.9.0
+Stable tag: 1.9.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -140,6 +140,10 @@ Yes. The layout uses logical properties throughout and the carousel direction fo
 10. Image Resolution set to Custom, with the Quality slider that compresses the generated file.
 
 == Changelog ==
+
+= 1.9.1 =
+* Fixed: a carousel that was hidden when the page loaded — inside a tab, an accordion or an off-canvas panel — never started autoplaying if it was revealed more than about five seconds later. The recovery that re-arms autoplay gave up after five seconds of polling and tore down the size observer with it, so nothing was left watching. The polling still stops; the observer now stays until it is needed.
+
 
 = 1.9.0 =
 * Added a Focal Point control. Cropped photographs were always cropped from the middle, which is what cuts the heads off portraits in a wide card. Nine presets, or Custom for a precise point.

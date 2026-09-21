@@ -429,15 +429,19 @@
 		var timer = null;
 		var attempts = 0;
 
+		function stopTimer() {
+			if ( timer ) {
+				window.clearInterval( timer );
+				timer = null;
+			}
+		}
+
 		function stopWatching() {
 			if ( observer ) {
 				observer.disconnect();
 				observer = null;
 			}
-			if ( timer ) {
-				window.clearInterval( timer );
-				timer = null;
-			}
+			stopTimer();
 		}
 
 		function rearm() {
@@ -480,7 +484,30 @@
 		timer = window.setInterval( function () {
 			attempts++;
 
-			if ( rearm() || attempts > 20 ) {
+			if ( rearm() ) {
+				stopWatching();
+				return;
+			}
+
+			if ( attempts <= 20 ) {
+				return;
+			}
+
+			/*
+			 * Five seconds of polling is plenty for the case it exists for — a
+			 * width that arrives without producing a resize entry. But the
+			 * observer is event-driven and costs nothing while idle, so it stays
+			 * on: a carousel inside a tab, an accordion or an off-canvas panel
+			 * can be revealed minutes after load, and tearing the observer down
+			 * here left autoplay dead for the rest of the page's life.
+			 *
+			 * With no ResizeObserver to fall back on there is nothing left to
+			 * wait with, so in that case give up completely rather than poll for
+			 * ever.
+			 */
+			if ( observer ) {
+				stopTimer();
+			} else {
 				stopWatching();
 			}
 		}, 250 );
